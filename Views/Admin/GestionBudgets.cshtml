@@ -1,0 +1,982 @@
+@model List<GestionBudget_V2.Models.Budget>
+@{
+    ViewData["Title"] = "Gestion des Budgets";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    // Culture pour le MAD Maroc
+    var cultureMaroc = new System.Globalization.CultureInfo("fr-MA");
+}
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    /* Variables de couleurs */
+    :root {
+        --primary-color: #4e73df;
+        --primary-light: #eef2ff;
+        --success-color: #1cc88a;
+        --success-light: #e8f8f2;
+        --info-color: #36b9cc;
+        --info-light: #e7f6f8;
+        --warning-color: #f6c23e;
+        --warning-light: #fef8e8;
+        --danger-color: #e74a3b;
+        --danger-light: #fdecea;
+        --gray-100: #f8f9fc;
+        --gray-200: #eaecf4;
+        --gray-600: #858796;
+        --gray-800: #5a5c69;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(78, 115, 223, 0.3);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-header .btn-add {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .page-header .btn-add:hover {
+        background: white;
+        color: var(--primary-color);
+    }
+
+    /* Cartes Statistiques */
+    .stat-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .stat-card.primary {
+        border-left: 5px solid var(--primary-color);
+        background: linear-gradient(135deg, var(--primary-light) 0%, white 100%);
+    }
+
+    .stat-card.success {
+        border-left: 5px solid var(--success-color);
+        background: linear-gradient(135deg, var(--success-light) 0%, white 100%);
+    }
+
+    .stat-card.info {
+        border-left: 5px solid var(--info-color);
+        background: linear-gradient(135deg, var(--info-light) 0%, white 100%);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-icon.primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .stat-icon.success {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .stat-icon.info {
+        background: var(--info-color);
+        color: white;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-800);
+    }
+
+    /* Carte Tableau */
+    .table-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .table-card .card-header {
+        background: white;
+        border-bottom: 2px solid var(--gray-200);
+        padding: 1.25rem 1.5rem;
+    }
+
+    .table-card .card-header h6 {
+        font-weight: 700;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .search-box {
+        position: relative;
+        max-width: 300px;
+    }
+
+    .search-box input {
+        padding-left: 2.5rem;
+        border-radius: 25px;
+        border: 2px solid var(--gray-200);
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-600);
+    }
+
+    /* Tableau */
+    .table-modern {
+        margin-bottom: 0;
+    }
+
+    .table-modern thead {
+        background: linear-gradient(135deg, var(--gray-800) 0%, #3a3b45 100%);
+    }
+
+    .table-modern thead th {
+        border: none;
+        padding: 1rem 1.25rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        color: white;
+        vertical-align: middle;
+    }
+
+    .table-modern tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: var(--gray-100);
+    }
+
+    .table-modern tbody td {
+        padding: 1rem 1.25rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .budget-id-badge {
+        background: var(--primary-light);
+        color: var(--primary-color);
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .montant-badge {
+        background: var(--success-light);
+        color: var(--success-color);
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .date-text {
+        color: var(--gray-600);
+        font-size: 0.9rem;
+    }
+
+    .date-text i {
+        margin-right: 0.35rem;
+        color: var(--info-color);
+    }
+
+    /* Boutons d'action */
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-action.edit {
+        background: var(--warning-light);
+        color: #b58a14;
+    }
+
+    .btn-action.edit:hover {
+        background: var(--warning-color);
+        color: white;
+    }
+
+    .btn-action.delete {
+        background: var(--danger-light);
+        color: var(--danger-color);
+    }
+
+    .btn-action.delete:hover {
+        background: var(--danger-color);
+        color: white;
+    }
+
+    /* Empty State */
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        color: var(--primary-color);
+    }
+
+    .empty-state h4 {
+        color: var(--gray-800);
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-state p {
+        color: var(--gray-600);
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(78, 115, 223, 0.4);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .modal-header.bg-danger {
+        background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%) !important;
+    }
+
+    .modal-header h5 {
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-body .alert {
+        border-radius: 10px;
+        border: none;
+    }
+
+    .modal-body .card {
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
+    }
+
+    .modal-body .card-body {
+        padding: 1.25rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--gray-200);
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-footer .btn {
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    /* Notification Modals */
+    .notification-modal .modal-content {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .notification-modal .modal-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+    }
+
+    .notification-modal.success .modal-icon {
+        background: var(--success-light);
+        color: var(--success-color);
+    }
+
+    .notification-modal.error .modal-icon {
+        background: var(--danger-light);
+        color: var(--danger-color);
+    }
+
+    .notification-modal.warning .modal-icon {
+        background: var(--warning-light);
+        color: #b58a14;
+    }
+
+    .notification-modal.info .modal-icon {
+        background: var(--info-light);
+        color: var(--info-color);
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .page-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .page-header h1 {
+            justify-content: center;
+        }
+
+        .stat-card .card-body {
+            padding: 1rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.25rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .table-card .card-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .search-box {
+            max-width: 100%;
+        }
+
+        .table-modern thead th,
+        .table-modern tbody td {
+            padding: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-action {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-action span {
+            display: none;
+        }
+
+        .montant-badge {
+            font-size: 0.85rem;
+            padding: 0.35rem 0.75rem;
+        }
+
+        .col-date-creation {
+            display: none;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .page-header .btn-add {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .action-buttons .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .action-buttons .btn-action span {
+            display: inline;
+        }
+    }
+
+    /* Styles pour les en-têtes de tableau */
+    .table thead th {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 600;
+        padding: 1rem 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.8rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .table thead th::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
+        pointer-events: none;
+    }
+
+    /* Couleurs différentes pour chaque type de tableau */
+    .table-professional thead th {
+        background: linear-gradient(135deg, #4A90A4 0%, #3A7A94 100%) !important;
+    }
+
+    .table-modern thead th {
+        background: linear-gradient(135deg, #5BA4B5 0%, #4A90A4 100%) !important;
+    }
+
+    .data-table thead th {
+        background: linear-gradient(135deg, #6C8EA4 0%, #5BA4B5 100%) !important;
+    }
+
+    /* Style pour les icônes dans les en-têtes */
+    .table thead th i {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 0.9rem;
+    }
+
+    /* Hover effect sur les en-têtes */
+    .table thead th:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #2A6A84 100%) !important;
+        transform: translateY(-1px);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Style pour le texte des en-têtes */
+    .table thead th {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Responsive */
+    @@media
+    (max-width: 768px) {
+        .table thead th {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .table thead th i {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap">
+        <h1>
+            <i class="bi bi-wallet2"></i>
+            Gestion des Budgets
+        </h1>
+        <a href="@Url.Action("DefinirBudget")" class="btn btn-add">
+            <i class="bi bi-plus-circle"></i>
+            Definir un Budget
+        </a>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="row mb-4 g-3">
+        <div class="col-lg-4 col-md-6">
+            <div class="card stat-card primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-primary">Budget Total Alloue</div>
+                            <div class="stat-value">
+                                @{
+                                    var budgetTotal = Model?.Sum(b => b.Montant_alloue) ?? 0;
+                                }
+                                @budgetTotal.ToString("C", cultureMaroc)
+                            </div>
+                        </div>
+                        <div class="stat-icon primary">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card stat-card success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-success">Nombre de Budgets</div>
+                            <div class="stat-value">
+                                @(Model?.Count ?? 0)
+                            </div>
+                        </div>
+                        <div class="stat-icon success">
+                            <i class="bi bi-bar-chart-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+            <div class="card stat-card info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-info">Dernier Budget</div>
+                            <div class="stat-value">
+                                @{
+                                    var dernierBudget = Model?.OrderByDescending(b =>
+                                    b.Date_alloue).FirstOrDefault()?.Montant_alloue ?? 0;
+                                }
+                                @dernierBudget.ToString("C", cultureMaroc)
+                            </div>
+                        </div>
+                        <div class="stat-icon info">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des budgets -->
+    <div class="card table-card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h6 class="m-0">
+                    <i class="bi bi-list-ul"></i>
+                    Liste des Budgets
+                </h6>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" class="form-control" id="searchBudget" placeholder="Rechercher un budget...">
+                    </div>
+                    <span class="badge bg-primary rounded-pill px-3 py-2">
+                        <i class="bi bi-wallet me-1"></i>
+                        @(Model?.Count ?? 0) budget(s)
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-modern" id="budgetTable">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-hash me-1"></i>ID</th>
+                                <th><i class="bi bi-currency-exchange me-1"></i>Montant Alloue</th>
+                                <th><i class="bi bi-calendar-check me-1"></i>Date d'Allocation</th>
+                                <th class="col-date-creation"><i class="bi bi-calendar-plus me-1"></i>Date de Creation</th>
+                                <th><i class="bi bi-gear me-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var budget in Model.OrderByDescending(b => b.Date_alloue))
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="budget-id-badge">#@budget.Id_budget</span>
+                                    </td>
+                                    <td>
+                                        <span class="montant-badge">
+                                            <i class="bi bi-coin"></i>
+                                            @budget.Montant_alloue.ToString("C", cultureMaroc)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="date-text">
+                                            <i class="bi bi-calendar3"></i>
+                                            @budget.Date_alloue.ToString("dd/MM/yyyy")
+                                        </span>
+                                    </td>
+                                    <td class="col-date-creation">
+                                        <span class="date-text">
+                                            <i class="bi bi-clock"></i>
+                                            @budget.DateCreation.ToString("dd/MM/yyyy HH:mm")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons d-flex gap-2">
+                                            <a href="@Url.Action("ModifierBudget", new { id = budget.Id_budget })"
+                                                class="btn-action edit" title="Modifier">
+                                                <i class="bi bi-pencil-square"></i>
+                                                <span>Modifier</span>
+                                            </a>
+                                            <button type="button" class="btn-action delete" data-bs-toggle="modal"
+                                                data-bs-target="#deleteBudgetModal" data-budget-id="@budget.Id_budget"
+                                                data-budget-montant="@budget.Montant_alloue"
+                                                data-budget-date="@budget.Date_alloue.ToString("dd/MM/yyyy")">
+                                                <i class="bi bi-trash3"></i>
+                                                <span>Supprimer</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <h4>Aucun budget defini</h4>
+                    <p>Commencez par definir votre premier budget pour suivre vos allocations financieres.</p>
+                    <a href="@Url.Action("DefinirBudget")" class="btn btn-primary-custom">
+                        <i class="bi bi-plus-circle"></i>
+                        Definir un Budget
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal de suppression Budget -->
+<div class="modal fade" id="deleteBudgetModal" tabindex="-1" aria-labelledby="deleteBudgetModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteBudgetModalLabel">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Suppression de Budget
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning d-flex align-items-start gap-2">
+                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1">Attention !</h6>
+                        <p class="mb-0 small">Vous etes sur le point de supprimer definitivement ce budget.</p>
+                    </div>
+                </div>
+                <p class="mb-3">Etes-vous sur de vouloir supprimer le budget suivant :</p>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="stat-icon primary" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-danger fw-bold">Budget #<span id="budgetIdText"></span></h6>
+                                <small class="text-muted">Identifiant unique</small>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="p-2 rounded" style="background: var(--success-light);">
+                                    <small class="text-muted d-block">Montant</small>
+                                    <strong class="text-success" id="budgetMontant"></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded" style="background: var(--info-light);">
+                                    <small class="text-muted d-block">Date allocation</small>
+                                    <strong class="text-info" id="budgetDate"></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-danger mt-3 mb-0 d-flex align-items-start gap-2">
+                    <i class="bi bi-shield-exclamation fs-5"></i>
+                    <div>
+                        <strong>Cette action est irreversible !</strong>
+                        <p class="mb-0 small">Cette suppression affectera les calculs de budget restant.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg"></i>
+                    Annuler
+                </button>
+                <form id="deleteBudgetForm" method="post" action="@Url.Action("SupprimerBudget", "Admin")"
+                    class="d-inline">
+                    <input type="hidden" name="id" id="budgetIdInput" />
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash3"></i>
+                        Confirmer la suppression
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals de Notification -->
+<!-- Success Modal -->
+<div class="modal fade notification-modal success" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-center p-4">
+            <div class="modal-icon">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Succes !</h5>
+            <p class="text-muted mb-3" id="successMessage">Operation effectuee avec succes.</p>
+            <button type="button" class="btn btn-success w-100" data-bs-dismiss="modal">
+                <i class="bi bi-check-lg me-1"></i>OK
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade notification-modal error" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-center p-4">
+            <div class="modal-icon">
+                <i class="bi bi-x-circle-fill"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Erreur !</h5>
+            <p class="text-muted mb-3" id="errorMessage">Une erreur s'est produite.</p>
+            <button type="button" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                <i class="bi bi-x-lg me-1"></i>Fermer
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Modal -->
+<div class="modal fade notification-modal warning" id="warningModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-center p-4">
+            <div class="modal-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Attention !</h5>
+            <p class="text-muted mb-3" id="warningMessage">Veuillez verifier les informations.</p>
+            <button type="button" class="btn btn-warning w-100" data-bs-dismiss="modal">
+                <i class="bi bi-check-lg me-1"></i>Compris
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Info Modal -->
+<div class="modal fade notification-modal info" id="infoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-center p-4">
+            <div class="modal-icon">
+                <i class="bi bi-info-circle-fill"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Information</h5>
+            <p class="text-muted mb-3" id="infoMessage">Information importante.</p>
+            <button type="button" class="btn btn-info text-white w-100" data-bs-dismiss="modal">
+                <i class="bi bi-check-lg me-1"></i>OK
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Gestion du modal de suppression Budget
+            const deleteBudgetModal = document.getElementById('deleteBudgetModal');
+            if (deleteBudgetModal) {
+                deleteBudgetModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+
+                    // Recuperer les donnees du budget
+                    const budgetId = button.getAttribute('data-budget-id');
+                    const budgetMontant = button.getAttribute('data-budget-montant');
+                    const budgetDate = button.getAttribute('data-budget-date');
+
+                    // Formater le montant en MAD
+                    const montantFormate = new Intl.NumberFormat('fr-MA', {
+                        style: 'currency',
+                        currency: 'MAD',
+                        minimumFractionDigits: 2
+                    }).format(parseFloat(budgetMontant));
+
+                    // Mettre a jour le contenu du modal
+                    document.getElementById('budgetIdText').textContent = budgetId;
+                    document.getElementById('budgetMontant').textContent = montantFormate;
+                    document.getElementById('budgetDate').textContent = budgetDate;
+                    document.getElementById('budgetIdInput').value = budgetId;
+                });
+            }
+
+            // Recherche en temps reel
+            const searchInput = document.getElementById('searchBudget');
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    const searchTerm = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('#budgetTable tbody tr');
+
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchTerm) ? '' : 'none';
+                    });
+                });
+            }
+
+            // Afficher les messages TempData
+            @if (TempData["Success"] != null)
+                {
+                    <text>showSuccessModal("@TempData["Success"]");</text>
+            }
+                @if (TempData["Error"] != null)
+                {
+                    <text>showErrorModal("@TempData["Error"]");</text>
+            }
+                @if (TempData["Warning"] != null)
+                {
+                    <text>showWarningModal("@TempData["Warning"]");</text>
+            }
+                @if (TempData["Info"] != null)
+                {
+                    <text>showInfoModal("@TempData["Info"]");</text>
+            }
+                });
+
+        // Fonctions pour afficher les modals de notification
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message) {
+            document.getElementById('warningMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('warningModal')).show();
+        }
+
+        function showInfoModal(message) {
+            document.getElementById('infoMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('infoModal')).show();
+        }
+    </script>
+}

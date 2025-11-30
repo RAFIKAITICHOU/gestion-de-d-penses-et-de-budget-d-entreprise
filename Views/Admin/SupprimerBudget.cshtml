@@ -1,0 +1,52 @@
+@model GestionBudget_V2.Models.Budget
+@{
+    ViewData["Title"] = "Supprimer Budget";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">🗑️ Supprimer le Budget</h1>
+        <a href="@Url.Action("GestionBudgets")" class="btn btn-secondary">
+            ↩ Retour à la liste
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h4>⚠️ Êtes-vous sûr de vouloir supprimer ce budget ?</h4>
+                        <p class="mb-0">Cette action est irréversible.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Informations du budget</h5>
+                        <hr />
+                        <dl class="row">
+                            <dt class="col-sm-4">Montant Alloué:</dt>
+                            <dd class="col-sm-8 fw-bold text-success">@Model.Montant_alloue.ToString("C")</dd>
+
+                            <dt class="col-sm-4">Date d'Allocation:</dt>
+                            <dd class="col-sm-8">@Model.Date_alloue.ToString("dd/MM/yyyy")</dd>
+
+                            <dt class="col-sm-4">Date de Création:</dt>
+                            <dd class="col-sm-8">@Model.DateCreation.ToString("dd/MM/yyyy HH:mm")</dd>
+                        </dl>
+                    </div>
+
+                    <form asp-action="SupprimerBudget">
+                        <input type="hidden" asp-for="Id_budget" />
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🗑️ Confirmer la Suppression
+                        </button>
+                        <a href="@Url.Action("GestionBudgets")" class="btn btn-secondary btn-lg">
+                            ❌ Annuler
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

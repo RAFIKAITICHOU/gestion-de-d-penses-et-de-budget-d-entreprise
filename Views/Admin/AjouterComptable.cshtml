@@ -1,0 +1,315 @@
+@model GestionBudget_V2.Models.Comptable
+@{
+    ViewData["Title"] = "Ajouter un Comptable";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/ajouter-comptable.css" />
+
+<div class="form-container">
+    <div class="container-fluid">
+        <!-- En-tete de page -->
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <h1>
+                <span class="header-icon">
+                    <i class="bi bi-person-plus-fill"></i>
+                </span>
+                Ajouter un Comptable
+            </h1>
+            <a href="@Url.Action("GestionComptables")" class="btn-back">
+                <i class="bi bi-arrow-left"></i>
+                Retour a la liste
+            </a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <!-- Carte du formulaire -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                        <div>
+                            <h6>Nouveau Comptable</h6>
+                            <p>Remplissez les informations pour creer un nouveau compte</p>
+                        </div>
+                    </div>
+
+                    <div class="form-card-body">
+                        <form asp-action="AjouterComptable" id="formAjouterComptable">
+                            <!-- Section Informations Personnelles -->
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <i class="bi bi-person"></i>
+                                    Informations Personnelles
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="Nom" class="form-label fw-semibold">
+                                                Nom <span class="required-asterisk">*</span>
+                                            </label>
+                                            <div class="input-group-icon">
+                                                <i class="bi bi-person input-icon"></i>
+                                                <input asp-for="Nom" class="form-control" placeholder="Entrez le nom"
+                                                    required />
+                                            </div>
+                                            <span asp-validation-for="Nom" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="Prenom" class="form-label fw-semibold">
+                                                Prenom <span class="required-asterisk">*</span>
+                                            </label>
+                                            <div class="input-group-icon">
+                                                <i class="bi bi-person input-icon"></i>
+                                                <input asp-for="Prenom" class="form-control"
+                                                    placeholder="Entrez le prenom" required />
+                                            </div>
+                                            <span asp-validation-for="Prenom" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section Informations de Connexion -->
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <i class="bi bi-shield-lock"></i>
+                                    Informations de Connexion
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label fw-semibold">
+                                        Adresse Email <span class="required-asterisk">*</span>
+                                    </label>
+                                    <div class="input-group-icon">
+                                        <i class="bi bi-envelope input-icon"></i>
+                                        <input asp-for="Email" type="email" class="form-control"
+                                            placeholder="exemple@domaine.com" required />
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="MotDePasse" class="form-label fw-semibold">
+                                        Mot de passe <span class="required-asterisk">*</span>
+                                    </label>
+                                    <div class="input-group-icon password-wrapper">
+                                        <i class="bi bi-lock input-icon"></i>
+                                        <input asp-for="MotDePasse" type="password" class="form-control"
+                                            id="passwordInput" placeholder="Entrez le mot de passe" required />
+                                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                                            <i class="bi bi-eye" id="toggleIcon"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="MotDePasse" class="text-danger"></span>
+
+                                    <!-- Indicateur de force -->
+                                    <div class="password-strength">
+                                        <div class="password-strength-bar">
+                                            <div class="password-strength-fill" id="strengthFill"></div>
+                                        </div>
+                                        <div class="password-strength-text" id="strengthText"></div>
+                                    </div>
+
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle"></i>
+                                        Le mot de passe sera hache automatiquement pour la securite
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Info card -->
+                            <div class="info-card mb-4">
+                                <h6>
+                                    <i class="bi bi-lightbulb"></i>
+                                    Conseils pour un mot de passe securise
+                                </h6>
+                                <ul>
+                                    <li>Minimum 8 caracteres</li>
+                                    <li>Au moins une lettre majuscule et minuscule</li>
+                                    <li>Au moins un chiffre</li>
+                                    <li>Un caractere special (@@, #, $, etc.)</li>
+                                </ul>
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn-submit">
+                                    <i class="bi bi-check-lg"></i>
+                                    Enregistrer le Comptable
+                                </button>
+                                <a href="@Url.Action("GestionComptables")" class="btn-cancel">
+                                    <i class="bi bi-x-lg"></i>
+                                    Annuler
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals (gardez-les dans le fichier Razor) -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon success">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+                <h5 class="mb-2">Succes !</h5>
+                <p class="text-muted mb-0" id="successMessage">Operation effectuee avec succes.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon error">
+                    <i class="bi bi-x-lg"></i>
+                </div>
+                <h5 class="mb-2">Erreur !</h5>
+                <p class="text-muted mb-0" id="errorMessage">Une erreur s'est produite.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="warningModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h5 class="mb-2">Attention !</h5>
+                <p class="text-muted mb-0" id="warningMessage">Verifiez les informations saisies.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-warning" id="warningConfirmBtn">Continuer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Toggle visibilite mot de passe
+        function togglePassword() {
+            const input = document.getElementById('passwordInput');
+            const icon = document.getElementById('toggleIcon');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+
+        // Indicateur de force du mot de passe
+        document.getElementById('passwordInput').addEventListener('input', function () {
+            const password = this.value;
+            const fill = document.getElementById('strengthFill');
+            const text = document.getElementById('strengthText');
+
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z\d]/.test(password)) strength++;
+
+            fill.className = 'password-strength-fill';
+            text.className = 'password-strength-text';
+
+            if (password.length === 0) {
+                fill.style.width = '0%';
+                text.textContent = '';
+            } else if (strength <= 1) {
+                fill.style.width = '25%';
+                fill.classList.add('strength-weak');
+                text.textContent = 'Faible';
+                text.style.color = '#e74a3b';
+            } else if (strength <= 2) {
+                fill.style.width = '50%';
+                fill.classList.add('strength-medium');
+                text.textContent = 'Moyen';
+                text.style.color = '#f6c23e';
+            } else if (strength <= 3) {
+                fill.style.width = '75%';
+                fill.classList.add('strength-medium');
+                text.textContent = 'Bon';
+                text.style.color = '#f6c23e';
+            } else {
+                fill.style.width = '100%';
+                fill.classList.add('strength-strong');
+                text.textContent = 'Excellent';
+                text.style.color = '#1cc88a';
+            }
+        });
+
+        // Fonctions pour les modals
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message, onConfirm) {
+            document.getElementById('warningMessage').textContent = message;
+            const modal = new bootstrap.Modal(document.getElementById('warningModal'));
+            document.getElementById('warningConfirmBtn').onclick = function () {
+                modal.hide();
+                if (onConfirm) onConfirm();
+            };
+            modal.show();
+        }
+
+        // Afficher les messages TempData
+        @if (TempData["Success"] != null)
+            {
+                <text>showSuccessModal('@TempData["Success"]');</text>
+        }
+            @if (TempData["Error"] != null)
+            {
+                <text>showErrorModal('@TempData["Error"]');</text>
+        }
+    </script>
+}

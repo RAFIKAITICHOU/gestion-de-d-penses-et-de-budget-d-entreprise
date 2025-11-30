@@ -1,0 +1,934 @@
+@model List<GestionBudget_V2.Models.Depense>
+@{
+    ViewData["Title"] = "Rapports et Statistiques";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Variables de couleurs */
+    :root {
+        --primary-color: #4e73df;
+        --success-color: #1cc88a;
+        --info-color: #36b9cc;
+        --warning-color: #f6c23e;
+        --danger-color: #e74a3b;
+        --light-bg: #f8f9fc;
+        --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    /* En-tete de page */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        border-radius: 15px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: var(--card-shadow);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-header .header-icon {
+        width: 45px;
+        height: 45px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    /* Boutons d'export */
+    .export-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+    }
+
+    .export-btn-csv {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .export-btn-csv:hover {
+        background: #17a673;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(28, 200, 138, 0.4);
+    }
+
+    .export-btn-pdf {
+        background: var(--danger-color);
+        color: white;
+    }
+
+    .export-btn-pdf:hover {
+        background: #c53030;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(231, 74, 59, 0.4);
+    }
+
+    /* Cartes statistiques */
+    .stat-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 2rem rgba(58, 59, 69, 0.15);
+    }
+
+    .stat-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .stat-card-primary {
+        border-left: 5px solid var(--primary-color);
+    }
+
+    .stat-card-success {
+        border-left: 5px solid var(--success-color);
+    }
+
+    .stat-card-info {
+        border-left: 5px solid var(--info-color);
+    }
+
+    .stat-card-warning {
+        border-left: 5px solid var(--warning-color);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-icon-primary {
+        background: rgba(78, 115, 223, 0.1);
+        color: var(--primary-color);
+    }
+
+    .stat-icon-success {
+        background: rgba(28, 200, 138, 0.1);
+        color: var(--success-color);
+    }
+
+    .stat-icon-info {
+        background: rgba(54, 185, 204, 0.1);
+        color: var(--info-color);
+    }
+
+    .stat-icon-warning {
+        background: rgba(246, 194, 62, 0.1);
+        color: var(--warning-color);
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    /* Cartes de contenu */
+    .content-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .content-card .card-header {
+        background: white;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 1rem 1.5rem;
+    }
+
+    .content-card .card-header h6 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .content-card .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Tableau des categories */
+    .category-table {
+        margin-bottom: 0;
+    }
+
+    .category-table thead th {
+        background: var(--light-bg);
+        border: none;
+        font-weight: 600;
+        color: #5a5c69;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+    }
+
+    .category-table tbody td {
+        vertical-align: middle;
+        padding: 1rem;
+        border-color: #e3e6f0;
+    }
+
+    .category-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .progress-custom {
+        height: 24px;
+        border-radius: 12px;
+        background: #e9ecef;
+        overflow: hidden;
+    }
+
+    .progress-custom .progress-bar {
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Liste des dernieres depenses */
+    .expense-item {
+        border: 1px solid #e3e6f0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .expense-item:hover {
+        background: var(--light-bg);
+        border-color: var(--primary-color);
+        transform: translateX(5px);
+    }
+
+    .expense-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .expense-category {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+    }
+
+    .expense-description {
+        color: #718096;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .expense-date {
+        font-size: 0.8rem;
+        color: #a0aec0;
+    }
+
+    .expense-amount {
+        background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    /* Tableau complet */
+    .full-table-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
+
+    .full-table-card .card-header {
+        background: white;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 1rem 1.5rem;
+    }
+
+    .data-table {
+        margin-bottom: 0;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    }
+
+    .data-table thead th {
+        color: white;
+        font-weight: 600;
+        border: none;
+        padding: 1rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background: var(--light-bg);
+    }
+
+    .data-table tbody td {
+        vertical-align: middle;
+        padding: 1rem;
+        border-color: #e3e6f0;
+    }
+
+    .id-badge {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        color: white;
+        padding: 0.35rem 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .amount-text {
+        font-weight: 700;
+        color: var(--success-color);
+    }
+
+    /* Etat vide */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+    }
+
+    .empty-state-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--light-bg);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+        color: #a0aec0;
+    }
+
+    .empty-state h4 {
+        color: #718096;
+        font-weight: 600;
+    }
+
+    /* Barre de recherche */
+    .search-box {
+        position: relative;
+        max-width: 300px;
+    }
+
+    .search-box input {
+        padding-left: 2.5rem;
+        border-radius: 10px;
+        border: 1px solid #e3e6f0;
+        height: 42px;
+    }
+
+    .search-box input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .page-header {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .header-actions {
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .export-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            text-align: center;
+        }
+
+        .page-header .d-flex {
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+        }
+
+        .data-table .hide-mobile {
+            display: none;
+        }
+
+        .expense-item {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 0.75rem;
+        }
+
+        .expense-amount {
+            align-self: flex-start;
+        }
+
+        .category-table thead th,
+        .category-table tbody td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    /* Styles pour les en-têtes de tableau */
+    .table thead th {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 600;
+        padding: 1rem 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.8rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .table thead th::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
+        pointer-events: none;
+    }
+
+    /* Couleurs différentes pour chaque type de tableau */
+    .table-professional thead th {
+        background: linear-gradient(135deg, #4A90A4 0%, #3A7A94 100%) !important;
+    }
+
+    .table-modern thead th {
+        background: linear-gradient(135deg, #5BA4B5 0%, #4A90A4 100%) !important;
+    }
+
+    .data-table thead th {
+        background: linear-gradient(135deg, #6C8EA4 0%, #5BA4B5 100%) !important;
+    }
+
+    /* Style pour les icônes dans les en-têtes */
+    .table thead th i {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 0.9rem;
+    }
+
+    /* Hover effect sur les en-têtes */
+    .table thead th:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #2A6A84 100%) !important;
+        transform: translateY(-1px);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Style pour le texte des en-têtes */
+    .table thead th {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Responsive */
+    @@media
+    (max-width: 768px) {
+        .table thead th {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .table thead th i {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- En-tete de page -->
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h1 class="h3">
+                <span class="header-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </span>
+                Rapports et Statistiques
+            </h1>
+            <div class="header-actions d-flex gap-2 flex-wrap">
+                <a href="@Url.Action("ExportCsv", "Admin")" class="export-btn export-btn-csv">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    Export CSV
+                </a>
+                <a href="@Url.Action("ExportPdf", "Admin")" class="export-btn export-btn-pdf">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                    Export PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques principales -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card stat-card-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-primary">Total Depenses</div>
+                            <div class="stat-value">@ViewBag.TotalDepenses.ToString("C")</div>
+                        </div>
+                        <div class="stat-icon stat-icon-primary">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card stat-card-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-success">Nombre de Depenses</div>
+                            <div class="stat-value">@ViewBag.NombreDepenses</div>
+                        </div>
+                        <div class="stat-icon stat-icon-success">
+                            <i class="bi bi-receipt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card stat-card-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-info">Depense Moyenne</div>
+                            <div class="stat-value">@ViewBag.MoyenneDepenses.ToString("C")</div>
+                        </div>
+                        <div class="stat-icon stat-icon-info">
+                            <i class="bi bi-calculator"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stat-card stat-card-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label text-warning">Budgets Definis</div>
+                            <div class="stat-value">@(ViewBag.TotalBudgets ?? 0)</div>
+                        </div>
+                        <div class="stat-icon stat-icon-warning">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Depenses par categorie et dernieres depenses -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card content-card">
+                <div class="card-header">
+                    <h6>
+                        <i class="bi bi-pie-chart"></i>
+                        Depenses par Categorie
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.DepensesParCategorie != null)
+                    {
+                        <div class="table-responsive">
+                            <table class="table category-table">
+                                <thead>
+                                    <tr>
+                                        <th>Categorie</th>
+                                        <th>Total</th>
+                                        <th>Pourcentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in ViewBag.DepensesParCategorie)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="category-badge bg-primary text-white">@item.Categorie</span>
+                                            </td>
+                                            <td class="fw-bold text-success">@item.Total.ToString("C")</td>
+                                            <td>
+                                                @{
+                                                    var pourcentage = ViewBag.TotalDepenses > 0 ?
+                                                    (item.Total / ViewBag.TotalDepenses * 100) : 0;
+                                                    var progressColor = pourcentage > 50 ? "bg-danger" :
+                                                    pourcentage > 25 ? "bg-warning" : "bg-success";
+                                                }
+                                                <div class="progress progress-custom">
+                                                    <div class="progress-bar @progressColor" style="width: @pourcentage%"
+                                                        role="progressbar" aria-valuenow="@pourcentage" aria-valuemin="0"
+                                                        aria-valuemax="100">
+                                                        @pourcentage.ToString("F1")%
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-pie-chart"></i>
+                            </div>
+                            <h4>Aucune categorie disponible</h4>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card content-card">
+                <div class="card-header">
+                    <h6>
+                        <i class="bi bi-clock-history"></i>
+                        Dernieres Depenses
+                    </h6>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var depense in Model.OrderByDescending(d => d.DateCreation).Take(10))
+                        {
+                            <div class="expense-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="expense-category">@depense.Categorie</div>
+                                    <div class="expense-description">@depense.Description</div>
+                                    <div class="expense-date">
+                                        <i class="bi bi-calendar3 me-1"></i>
+                                        @depense.Date_depense.ToString("dd/MM/yyyy")
+                                    </div>
+                                </div>
+                                <span class="expense-amount">
+                                    @depense.Montant.ToString("C")
+                                </span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-inbox"></i>
+                            </div>
+                            <h4>Aucune donnee disponible</h4>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau complet des depenses -->
+    <div class="card full-table-card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h6 class="m-0 font-weight-bold text-primary d-flex align-items-center gap-2">
+                    <i class="bi bi-table"></i>
+                    Liste Complete des Depenses
+                </h6>
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="searchTable" class="form-control" placeholder="Rechercher...">
+                    </div>
+                    <a href="@Url.Action("ExportCsv", "Admin")"
+                        class="btn btn-sm btn-success d-flex align-items-center gap-1">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        <span class="d-none d-md-inline">CSV</span>
+                    </a>
+                    <a href="@Url.Action("ExportPdf", "Admin")"
+                        class="btn btn-sm btn-danger d-flex align-items-center gap-1">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                        <span class="d-none d-md-inline">PDF</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table data-table" id="expensesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Categorie</th>
+                                <th class="hide-mobile">Description</th>
+                                <th>Montant</th>
+                                <th class="hide-mobile">Date Creation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var depense in Model.OrderByDescending(d => d.Date_depense))
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="id-badge">#@depense.Id_depense</span>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-calendar3 text-muted me-1"></i>
+                                        @depense.Date_depense.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td>
+                                        @{
+                                            var catLower = depense.Categorie?.ToLower() ?? "";
+                                            var badgeClass = catLower.Contains("fourniture") ? "bg-info" :
+                                            catLower.Contains("equip") ? "bg-primary" :
+                                            catLower.Contains("service") ? "bg-success" :
+                                            catLower.Contains("transport") ? "bg-warning text-dark" :
+                                            catLower.Contains("autre") ? "bg-secondary" : "bg-primary";
+                                        }
+                                        <span class="badge @badgeClass">@depense.Categorie</span>
+                                    </td>
+                                    <td class="hide-mobile">@depense.Description</td>
+                                    <td class="amount-text">@depense.Montant.ToString("C")</td>
+                                    <td class="hide-mobile text-muted">
+                                        <small>@depense.DateCreation.ToString("dd/MM/yyyy HH:mm")</small>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state py-5">
+                    <div class="empty-state-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <h4>Aucune depense enregistree</h4>
+                    <p class="text-muted">Les depenses apparaitront ici une fois ajoutees.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Succes -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0" style="border-radius: 15px; overflow: hidden;">
+            <div class="modal-body text-center p-4">
+                <div
+                    style="width: 80px; height: 80px; background: rgba(28, 200, 138, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 2.5rem;"></i>
+                </div>
+                <h4 class="mb-2">Succes!</h4>
+                <p class="text-muted mb-4" id="successMessage">Operation reussie.</p>
+                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal" style="border-radius: 10px;">
+                    <i class="bi bi-check2 me-2"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Erreur -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0" style="border-radius: 15px; overflow: hidden;">
+            <div class="modal-body text-center p-4">
+                <div
+                    style="width: 80px; height: 80px; background: rgba(231, 74, 59, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="bi bi-x-circle-fill text-danger" style="font-size: 2.5rem;"></i>
+                </div>
+                <h4 class="mb-2">Erreur!</h4>
+                <p class="text-muted mb-4" id="errorMessage">Une erreur s'est produite.</p>
+                <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal" style="border-radius: 10px;">
+                    <i class="bi bi-x-lg me-2"></i>Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Avertissement -->
+<div class="modal fade" id="warningModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0" style="border-radius: 15px; overflow: hidden;">
+            <div class="modal-body text-center p-4">
+                <div
+                    style="width: 80px; height: 80px; background: rgba(246, 194, 62, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 2.5rem;"></i>
+                </div>
+                <h4 class="mb-2">Attention!</h4>
+                <p class="text-muted mb-4" id="warningMessage">Veuillez faire attention.</p>
+                <button type="button" class="btn btn-warning px-4" data-bs-dismiss="modal" style="border-radius: 10px;">
+                    <i class="bi bi-check2 me-2"></i>Compris
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Information -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0" style="border-radius: 15px; overflow: hidden;">
+            <div class="modal-body text-center p-4">
+                <div
+                    style="width: 80px; height: 80px; background: rgba(54, 185, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="bi bi-info-circle-fill text-info" style="font-size: 2.5rem;"></i>
+                </div>
+                <h4 class="mb-2">Information</h4>
+                <p class="text-muted mb-4" id="infoMessage">Voici une information.</p>
+                <button type="button" class="btn btn-info text-white px-4" data-bs-dismiss="modal"
+                    style="border-radius: 10px;">
+                    <i class="bi bi-check2 me-2"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Fonctions pour afficher les modals
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message) {
+            document.getElementById('warningMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('warningModal')).show();
+        }
+
+        function showInfoModal(message) {
+            document.getElementById('infoMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('infoModal')).show();
+        }
+
+        // Recherche dans le tableau
+        document.getElementById('searchTable')?.addEventListener('input', function () {
+            const searchValue = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#expensesTable tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        // Afficher les messages TempData
+        @if (TempData["Success"] != null)
+            {
+                <text>showSuccessModal("@TempData["Success"]");</text>
+        }
+            @if (TempData["Error"] != null)
+            {
+                <text>showErrorModal("@TempData["Error"]");</text>
+        }
+            @if (TempData["Warning"] != null)
+            {
+                <text>showWarningModal("@TempData["Warning"]");</text>
+        }
+            @if (TempData["Info"] != null)
+            {
+                <text>showInfoModal("@TempData["Info"]");</text>
+        }
+    </script>
+}

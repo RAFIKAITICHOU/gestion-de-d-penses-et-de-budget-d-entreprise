@@ -1,0 +1,75 @@
+@model GestionBudget_V2.Models.Depense
+@{
+    ViewData["Title"] = "Ajouter une Dépense";
+    Layout = "~/Views/Shared/_ComptableLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Ajouter une Dépense</h1>
+        <a href="@Url.Action("GestionDepenses")" class="btn btn-secondary">
+            ↩ Retour à la liste
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">📝 Nouvelle Dépense</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AjouterDepense">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Date_depense" class="form-label">Date de la Dépense *</label>
+                                    <input asp-for="Date_depense" type="date" class="form-control" required />
+                                    <span asp-validation-for="Date_depense" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Montant" class="form-label">Montant *</label>
+                                    <input asp-for="Montant" type="number" step="0.01" class="form-control"
+                                        placeholder="0.00" required />
+                                    <span asp-validation-for="Montant" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Categorie" class="form-label">Catégorie *</label>
+                            <select asp-for="Categorie" class="form-control" required>
+                                <option value="">Sélectionnez une catégorie</option>
+                                <option value="Fournitures">Fournitures</option>
+                                <option value="Équipement">Équipement</option>
+                                <option value="Services">Services</option>
+                                <option value="Formation">Formation</option>
+                                <option value="Déplacement">Déplacement</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                            <span asp-validation-for="Categorie" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"
+                                placeholder="Description de la dépense..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                💾 Enregistrer la Dépense
+                            </button>
+                            <a href="@Url.Action("GestionDepenses")" class="btn btn-secondary btn-lg">
+                                ❌ Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

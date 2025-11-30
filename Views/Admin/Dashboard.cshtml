@@ -1,0 +1,1164 @@
+@{
+    ViewData["Title"] = "Tableau de Bord Administrateur";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var cultureMaroc = new System.Globalization.CultureInfo("fr-MA");
+}
+
+<style>
+    /* ===== Variables CSS pour couleurs claires professionnelles ===== */
+    :root {
+        --primary-color: #4e73df;
+        --primary-light: #e8f0fe;
+        --success-color: #1cc88a;
+        --success-light: #e6f9f1;
+        --info-color: #36b9cc;
+        --info-light: #e3f7fa;
+        --warning-color: #f6c23e;
+        --warning-light: #fff9e6;
+        --danger-color: #e74a3b;
+        --bg-light: #f8f9fc;
+        --bg-white: #ffffff;
+        --text-dark: #5a5c69;
+        --text-muted: #858796;
+        --border-color: #e3e6f0;
+        --shadow-sm: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+    }
+
+    /* ===== Base Styles ===== */
+    body {
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-container {
+        padding: 1.5rem;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ===== En-tête du Dashboard ===== */
+    .dashboard-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .dashboard-header h1 {
+        font-weight: 600;
+        margin: 0;
+        font-size: 1.75rem;
+    }
+
+    .dashboard-header .update-time {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+    }
+
+    /* ===== Cartes de Statistiques ===== */
+    .stat-card {
+        background: var(--bg-white);
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .stat-card .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+
+    .stat-card.primary .stat-icon {
+        background: var(--primary-light);
+        color: var(--primary-color);
+    }
+
+    .stat-card.success .stat-icon {
+        background: var(--success-light);
+        color: var(--success-color);
+    }
+
+    .stat-card.info .stat-icon {
+        background: var(--info-light);
+        color: var(--info-color);
+    }
+
+    .stat-card.warning .stat-icon {
+        background: var(--warning-light);
+        color: var(--warning-color);
+    }
+
+    .stat-card .stat-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .stat-card .stat-border {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        border-radius: 15px 0 0 15px;
+    }
+
+    .stat-card.primary .stat-border {
+        background: var(--primary-color);
+    }
+
+    .stat-card.success .stat-border {
+        background: var(--success-color);
+    }
+
+    .stat-card.info .stat-border {
+        background: var(--info-color);
+    }
+
+    .stat-card.warning .stat-border {
+        background: var(--warning-color);
+    }
+
+    /* ===== Cartes de Graphiques ===== */
+    .chart-card {
+        background: var(--bg-white);
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--shadow-sm);
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .chart-card .card-header {
+        background: transparent;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.25rem 1.5rem;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .chart-card .card-header h6 {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .chart-card .card-header .header-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        background: var(--primary-light);
+    }
+
+    .chart-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 250px;
+    }
+
+    .chart-container-lg {
+        height: 300px;
+    }
+
+    /* ===== Boutons d'Actions Rapides ===== */
+    .action-card {
+        background: var(--bg-white);
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem;
+        border-radius: 12px;
+        border: 2px solid var(--border-color);
+        background: var(--bg-white);
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-sm);
+        text-decoration: none;
+    }
+
+    .action-btn.primary:hover {
+        border-color: var(--primary-color);
+        background: var(--primary-light);
+        color: var(--primary-color);
+    }
+
+    .action-btn.success:hover {
+        border-color: var(--success-color);
+        background: var(--success-light);
+        color: var(--success-color);
+    }
+
+    .action-btn.info:hover {
+        border-color: var(--info-color);
+        background: var(--info-light);
+        color: var(--info-color);
+    }
+
+    .action-btn.warning:hover {
+        border-color: var(--warning-color);
+        background: var(--warning-light);
+        color: #b38600;
+    }
+
+    .action-btn .action-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .action-btn.primary .action-icon {
+        background: var(--primary-light);
+    }
+
+    .action-btn.success .action-icon {
+        background: var(--success-light);
+    }
+
+    .action-btn.info .action-icon {
+        background: var(--info-light);
+    }
+
+    .action-btn.warning .action-icon {
+        background: var(--warning-light);
+    }
+
+    .action-btn .action-text .title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .action-btn .action-text .subtitle {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    /* ===== Liste des Activités ===== */
+    .activity-card {
+        background: var(--bg-white);
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .activity-item {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        transition: background 0.2s ease;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-item:hover {
+        background: var(--bg-light);
+    }
+
+    .activity-item .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--success-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .activity-item .activity-details .category {
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+    }
+
+    .activity-item .activity-details .description {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .activity-item .activity-amount {
+        text-align: right;
+    }
+
+    .activity-item .activity-amount .amount {
+        font-weight: 700;
+        color: var(--success-color);
+        font-size: 1rem;
+    }
+
+    .activity-item .activity-amount .date {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+        padding: 3rem;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    .empty-state .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    /* ===== Modal Styles ===== */
+    .modal-content {
+        border: none;
+        border-radius: 15px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.25rem 1.5rem;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .modal-header.success {
+        background: var(--success-light);
+    }
+
+    .modal-header.warning {
+        background: var(--warning-light);
+    }
+
+    .modal-header.danger {
+        background: #fce8e6;
+    }
+
+    .modal-header.info {
+        background: var(--info-light);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-color);
+        padding: 1rem 1.5rem;
+    }
+
+    /* ===== Responsive Adjustments ===== */
+    @@media (max-width: 1200px) {
+        .stat-card .stat-value {
+            font-size: 1.25rem;
+        }
+    }
+
+    @@media (max-width: 992px) {
+        .dashboard-header {
+            padding: 1.5rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .chart-container {
+            height: 220px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .dashboard-container {
+            padding: 1rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            padding: 1.25rem;
+        }
+
+        .dashboard-header .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stat-card .card-body {
+            padding: 1rem;
+        }
+
+        .stat-card .stat-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+
+        .action-btn {
+            padding: 1rem;
+        }
+
+        .action-btn .action-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+        }
+
+        .chart-container {
+            height: 200px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .dashboard-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.1rem;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.7rem;
+        }
+
+        .activity-item {
+            flex-wrap: wrap;
+        }
+
+        .activity-item .activity-amount {
+            width: 100%;
+            text-align: left;
+            margin-top: 0.5rem;
+            padding-left: 56px;
+        }
+    }
+
+    /* ===== Scrollbar Custom ===== */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--bg-light);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
+
+<div class="dashboard-container">
+    <!-- En-tête du Dashboard -->
+    <div class="dashboard-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center">
+                <span class="me-3" style="font-size: 2rem;">📊</span>
+                <div>
+                    <h1>Tableau de Bord Administrateur</h1>
+                    <p class="mb-0 opacity-75">Gérez vos finances et suivez vos dépenses</p>
+                </div>
+            </div>
+            <div class="update-time">
+                <i class="bi bi-clock me-1"></i>
+                Mise à jour : @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </div>
+    </div>
+
+    <!-- Cartes de Statistiques -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="stat-card primary position-relative">
+                <div class="stat-border"></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label">Budgets Définis</div>
+                            <div class="stat-value">@ViewBag.Stats.TotalBudgets</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="stat-card success position-relative">
+                <div class="stat-border"></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label">Total Dépenses</div>
+                            <div class="stat-value">@ViewBag.Stats.TotalDepenses.ToString("C", cultureMaroc)</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="stat-card info position-relative">
+                <div class="stat-border"></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label">Comptables Actifs</div>
+                            <div class="stat-value">@ViewBag.Stats.TotalComptables</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="stat-card warning position-relative">
+                <div class="stat-border"></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label">Budget Restant</div>
+                            <div class="stat-value">@ViewBag.Stats.BudgetRestant.ToString("C", cultureMaroc)</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques Principaux -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-6">
+            <div class="chart-card h-100">
+                <div class="card-header">
+                    <h6>
+                        <span class="header-icon">📊</span>
+                        Dépenses par Catégorie
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container chart-container-lg">
+                        <canvas id="categorieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="chart-card h-100">
+                <div class="card-header">
+                    <h6>
+                        <span class="header-icon">📈</span>
+                        Évolution des Dépenses (6 mois)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container chart-container-lg">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deuxième Ligne de Graphiques -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-4 col-lg-6">
+            <div class="chart-card h-100">
+                <div class="card-header">
+                    <h6>
+                        <span class="header-icon">💰</span>
+                        Budget vs Dépenses
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6">
+            <div class="chart-card h-100">
+                <div class="card-header">
+                    <h6>
+                        <span class="header-icon">🎯</span>
+                        Répartition des Dépenses
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="repartitionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-12">
+            <div class="chart-card h-100">
+                <div class="card-header">
+                    <h6>
+                        <span class="header-icon">🏆</span>
+                        Top 5 Catégories
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="topCategoriesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Rapides et Activités Récentes -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="action-card h-100">
+                <div class="card-header">
+                    <h6 class="m-0 fw-bold" style="color: var(--text-dark);">
+                        <span class="header-icon me-2">🚀</span>
+                        Actions Rapides
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="@Url.Action("GestionComptables")" class="action-btn primary">
+                                <div class="action-icon">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="title">Gérer les Comptables</div>
+                                    <div class="subtitle">Ajouter, modifier, supprimer</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="@Url.Action("GestionBudgets")" class="action-btn success">
+                                <div class="action-icon">
+                                    <i class="bi bi-piggy-bank-fill"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="title">Gérer les Budgets</div>
+                                    <div class="subtitle">Définir et suivre</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="@Url.Action("ConsulterDepenses")" class="action-btn info">
+                                <div class="action-icon">
+                                    <i class="bi bi-receipt-cutoff"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="title">Consulter Dépenses</div>
+                                    <div class="subtitle">Voir toutes les dépenses</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="@Url.Action("Rapports")" class="action-btn warning">
+                                <div class="action-icon">
+                                    <i class="bi bi-file-earmark-bar-graph-fill"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="title">Rapports Détaillés</div>
+                                    <div class="subtitle">Analyses complètes</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="activity-card h-100">
+                <div class="card-header">
+                    <h6 class="m-0 fw-bold" style="color: var(--text-dark);">
+                        <span class="header-icon me-2">🕒</span>
+                        Activités Récentes
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    @if (ViewBag.DernieresDepenses != null && ViewBag.DernieresDepenses.Count > 0)
+                    {
+                        foreach (var depense in ViewBag.DernieresDepenses)
+                        {
+                            <div class="activity-item d-flex align-items-center">
+                                <div class="activity-icon">
+                                    <i class="bi bi-cart-check"></i>
+                                </div>
+                                <div class="activity-details flex-grow-1">
+                                    <div class="category">@depense.Categorie</div>
+                                    <div class="description">@depense.Description</div>
+                                </div>
+                                <div class="activity-amount">
+                                    <div class="amount">@depense.Montant.ToString("C", cultureMaroc)</div>
+                                    <div class="date">@depense.Date_depense.ToString("dd/MM/yyyy")</div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <div class="empty-icon">📭</div>
+                            <p class="mb-0">Aucune activité récente</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Succès -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header success">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    Succès
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage" class="mb-0"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+                    <i class="bi bi-check-lg me-1"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'Erreur -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header danger">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+                    Erreur
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage" class="mb-0"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-1"></i>Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'Avertissement -->
+<div class="modal fade" id="warningModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header warning">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-circle-fill text-warning me-2"></i>
+                    Attention
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p id="warningMessage" class="mb-0"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-warning" id="warningConfirmBtn">
+                    <i class="bi bi-check-lg me-1"></i>Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'Information -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header info">
+                <h5 class="modal-title">
+                    <i class="bi bi-info-circle-fill text-info me-2"></i>
+                    Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p id="infoMessage" class="mb-0"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info text-white" data-bs-dismiss="modal">
+                    <i class="bi bi-check-lg me-1"></i>Compris
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // ===== Fonctions pour les Modals =====
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message, confirmCallback) {
+            document.getElementById('warningMessage').textContent = message;
+            const modal = new bootstrap.Modal(document.getElementById('warningModal'));
+
+            const confirmBtn = document.getElementById('warningConfirmBtn');
+            confirmBtn.onclick = function () {
+                modal.hide();
+                if (confirmCallback) confirmCallback();
+            };
+
+            modal.show();
+        }
+
+        function showInfoModal(message) {
+            document.getElementById('infoMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('infoModal')).show();
+        }
+
+        // ===== Graphiques =====
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('=== DÉMARRAGE DES GRAPHIQUES MAD ===');
+
+            const categoriesData = @Html.Raw(Json.Serialize(ViewBag.DepensesParCategorie ?? new List<object>()));
+            const monthlyData = @Html.Raw(Json.Serialize(ViewBag.DepensesMensuelles ?? new List<object>()));
+            const budgetTotal = parseFloat('@(ViewBag.BudgetTotal ?? 0)');
+            const depensesTotal = parseFloat('@(ViewBag.DepensesTotal ?? 0)');
+
+            // Vérification des données
+            if (!categoriesData || categoriesData.length === 0) {
+                console.warn('Aucune donnée disponible');
+                showInfoModal('Aucune donnée de dépenses disponible pour le moment.');
+                return;
+            }
+
+            // Préparation des données
+            const categories = categoriesData.map(c => c.categorie);
+            const categoryAmounts = categoriesData.map(c => parseFloat(c.total));
+            const monthlyLabels = monthlyData.map(m => m.mois);
+            const monthlyAmounts = monthlyData.map(m => parseFloat(m.total));
+
+            // Palette de couleurs professionnelles claires
+            const colors = {
+                primary: ['#4e73df', '#6f8dd6', '#8fa7e0', '#b0c1ea', '#d0dbf4'],
+                gradient: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'],
+                pastel: ['#a8d5e5', '#b8e0d2', '#d6eadf', '#eaf2d7', '#fae8d4', '#f7d1cd']
+            };
+
+            // Format MAD
+            const formatMAD = (value) => {
+                return new Intl.NumberFormat('fr-MA', {
+                    style: 'currency',
+                    currency: 'MAD',
+                    minimumFractionDigits: 2
+                }).format(value);
+            };
+
+            // Options communes
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: { size: 12 }
+                        }
+                    }
+                }
+            };
+
+            // 1. Graphique Doughnut - Dépenses par Catégorie
+            createChart('categorieChart', 'doughnut', {
+                labels: categories,
+                datasets: [{
+                    data: categoryAmounts,
+                    backgroundColor: colors.gradient,
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            }, {
+                ...commonOptions,
+                cutout: '60%',
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.label}: ${formatMAD(ctx.raw)}`
+                        }
+                    }
+                }
+            });
+
+            // 2. Graphique Line - Évolution Mensuelle
+            createChart('monthlyChart', 'line', {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: 'Dépenses',
+                    data: monthlyAmounts,
+                    borderColor: '#4e73df',
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#4e73df',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            }, {
+                ...commonOptions,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `Dépenses: ${formatMAD(ctx.raw)}`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { callback: value => formatMAD(value) }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            });
+
+            // 3. Graphique Pie - Budget vs Dépenses
+            createChart('budgetChart', 'pie', {
+                labels: ['Budget Utilisé', 'Budget Restant'],
+                datasets: [{
+                    data: [depensesTotal, Math.max(0, budgetTotal - depensesTotal)],
+                    backgroundColor: ['#e74a3b', '#1cc88a'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            }, {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.label}: ${formatMAD(ctx.raw)}`
+                        }
+                    }
+                }
+            });
+
+            // 4. Graphique Polar Area - Répartition
+            createChart('repartitionChart', 'polarArea', {
+                labels: categories,
+                datasets: [{
+                    data: categoryAmounts,
+                    backgroundColor: colors.gradient.map(c => c + 'cc'),
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            }, {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.label}: ${formatMAD(ctx.raw)}`
+                        }
+                    }
+                }
+            });
+
+            // 5. Graphique Bar - Top 5 Catégories
+            const topCategories = categoriesData
+                .slice(0, 5)
+                .sort((a, b) => b.total - a.total);
+
+            createChart('topCategoriesChart', 'bar', {
+                labels: topCategories.map(c => c.categorie),
+                datasets: [{
+                    label: 'Montant',
+                    data: topCategories.map(c => parseFloat(c.total)),
+                    backgroundColor: colors.gradient.slice(0, 5),
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            }, {
+                ...commonOptions,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${formatMAD(ctx.raw)}`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { callback: value => formatMAD(value) }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            });
+
+            console.log('=== GRAPHIQUES CRÉÉS AVEC SUCCÈS ===');
+        });
+
+        // Helper pour créer les graphiques
+        function createChart(canvasId, type, data, options) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.warn(`Canvas ${canvasId} non trouvé`);
+                return;
+            }
+
+            try {
+                new Chart(canvas, { type, data, options });
+                console.log(`✅ Graphique ${canvasId} créé`);
+            } catch (error) {
+                console.error(`❌ Erreur graphique ${canvasId}:`, error);
+                showErrorModal(`Erreur lors de la création du graphique ${canvasId}`);
+            }
+        }
+
+        // Vérifier les messages TempData au chargement
+        @if (TempData["Success"] != null)
+            {
+                <text>showSuccessModal('@TempData["Success"]');</text>
+        }
+            @if (TempData["Error"] != null)
+            {
+                <text>showErrorModal('@TempData["Error"]');</text>
+        }
+            @if (TempData["Warning"] != null)
+            {
+                <text>showWarningModal('@TempData["Warning"]');</text>
+        }
+            @if (TempData["Info"] != null)
+            {
+                <text>showInfoModal('@TempData["Info"]');</text>
+        }
+    </script>
+}

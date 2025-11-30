@@ -1,0 +1,600 @@
+@model GestionBudget_V2.Models.Budget
+@{
+    ViewData["Title"] = "Définir un Budget";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Variables */
+    :root {
+        --primary-color: #4e73df;
+        --primary-light: #eef2ff;
+        --success-color: #1cc88a;
+        --success-light: #e8f8f2;
+        --info-color: #36b9cc;
+        --info-light: #e8f7f9;
+        --warning-color: #f6c23e;
+        --warning-light: #fef8e8;
+        --danger-color: #e74a3b;
+        --danger-light: #fceae8;
+        --gray-100: #f8f9fc;
+        --gray-200: #eaecf4;
+        --gray-600: #858796;
+        --gray-800: #5a5c69;
+        --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        --shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+        --transition: all 0.2s ease-in-out;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        border-radius: 0.75rem;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: var(--shadow);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-header .header-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.6rem 1.25rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+        transform: translateX(-3px);
+    }
+
+    /* Form Card */
+    .form-card {
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        background: white;
+    }
+
+    .form-card .card-header {
+        background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        padding: 1.25rem 1.5rem;
+        border-bottom: none;
+    }
+
+    .form-card .card-header h6 {
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .form-card .card-header .header-icon {
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .form-card .card-body {
+        padding: 2rem;
+    }
+
+    /* Form Styles */
+    .form-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-section-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .form-label .required {
+        color: var(--danger-color);
+    }
+
+    .input-group-icon {
+        position: relative;
+    }
+
+    .input-group-icon .form-control {
+        padding-left: 2.75rem;
+        height: 48px;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: var(--transition);
+    }
+
+    .input-group-icon .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.15);
+    }
+
+    .input-group-icon .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-600);
+        font-size: 1.1rem;
+        z-index: 4;
+    }
+
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Info Card */
+    .info-card {
+        background: var(--info-light);
+        border: 1px solid rgba(54, 185, 204, 0.3);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-card h6 {
+        color: var(--info-color);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-card ul {
+        margin: 0;
+        padding-left: 1.25rem;
+        color: var(--gray-800);
+    }
+
+    .info-card ul li {
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    /* Buttons */
+    .btn-action {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+        border: none;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        color: white;
+        box-shadow: 0 4px 6px rgba(28, 200, 138, 0.3);
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #17a673 0%, #138f5e 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(28, 200, 138, 0.4);
+    }
+
+    .btn-cancel {
+        background: var(--gray-200);
+        color: var(--gray-800);
+    }
+
+    .btn-cancel:hover {
+        background: #d1d3e2;
+        color: var(--gray-800);
+        transform: translateY(-2px);
+    }
+
+    /* Quick Amount Buttons */
+    .quick-amounts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .quick-amount-btn {
+        padding: 0.4rem 0.75rem;
+        border: 1px solid var(--gray-200);
+        background: white;
+        border-radius: 0.375rem;
+        font-size: 0.85rem;
+        color: var(--gray-800);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .quick-amount-btn:hover {
+        background: var(--primary-light);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+        border-radius: 0.75rem 0.75rem 0 0;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--gray-200);
+    }
+
+    .modal-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+    }
+
+    .modal-icon.success {
+        background: var(--success-light);
+        color: var(--success-color);
+    }
+
+    .modal-icon.error {
+        background: var(--danger-light);
+        color: var(--danger-color);
+    }
+
+    .modal-icon.warning {
+        background: var(--warning-light);
+        color: var(--warning-color);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1.25rem;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 1.25rem;
+            justify-content: center;
+        }
+
+        .form-card .card-body {
+            padding: 1.25rem;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .button-group .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .quick-amounts {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap">
+        <h1 class="h3">
+            <span class="header-icon">
+                <i class="bi bi-pencil-square"></i>
+            </span>
+            Définir un Budget
+        </h1>
+        <a href="@Url.Action("GestionBudgets")" class="btn-back">
+            <i class="bi bi-arrow-left"></i>
+            Retour à la liste
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <!-- Info Card -->
+            <div class="info-card">
+                <h6>
+                    <i class="bi bi-info-circle-fill"></i>
+                    Informations sur le budget
+                </h6>
+                <ul>
+                    <li>Le montant alloué doit être supérieur à 0</li>
+                    <li>La date d'allocation correspond à la date de mise en vigueur du budget</li>
+                    <li>Vous pourrez modifier ce budget ultérieurement si nécessaire</li>
+                </ul>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card form-card">
+                <div class="card-header">
+                    <h6>
+                        <span class="header-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </span>
+                        Nouveau Budget
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="DefinirBudget">
+                        <!-- Montant Section -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="bi bi-currency-dollar"></i>
+                                Montant du Budget
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label asp-for="Montant_alloue" class="form-label">
+                                            Montant Alloué <span class="required">*</span>
+                                        </label>
+                                        <div class="input-group-icon">
+                                            <i class="bi bi-cash input-icon"></i>
+                                            <input asp-for="Montant_alloue" type="number" step="0.01" min="0"
+                                                class="form-control" placeholder="Entrez le montant (ex: 50000.00)"
+                                                required />
+                                        </div>
+                                        <span asp-validation-for="Montant_alloue" class="text-danger"></span>
+
+                                        <!-- Quick Amount Buttons -->
+                                        <div class="quick-amounts">
+                                            <span class="text-muted me-2" style="font-size: 0.85rem;">Montants
+                                                rapides:</span>
+                                            <button type="button" class="quick-amount-btn" onclick="setAmount(10000)">10
+                                                000</button>
+                                            <button type="button" class="quick-amount-btn" onclick="setAmount(25000)">25
+                                                000</button>
+                                            <button type="button" class="quick-amount-btn" onclick="setAmount(50000)">50
+                                                000</button>
+                                            <button type="button" class="quick-amount-btn"
+                                                onclick="setAmount(100000)">100 000</button>
+                                            <button type="button" class="quick-amount-btn"
+                                                onclick="setAmount(250000)">250 000</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Section -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="bi bi-calendar-event"></i>
+                                Date d'Allocation
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="Date_alloue" class="form-label">
+                                            Date d'Allocation <span class="required">*</span>
+                                        </label>
+                                        <div class="input-group-icon">
+                                            <i class="bi bi-calendar3 input-icon"></i>
+                                            <input asp-for="Date_alloue" type="date" class="form-control" required />
+                                        </div>
+                                        <span asp-validation-for="Date_alloue" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-primary mb-3" onclick="setToday()">
+                                        <i class="bi bi-calendar-check me-1"></i>
+                                        Aujourd'hui
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 button-group mt-4 pt-3 border-top">
+                            <button type="submit" class="btn-action btn-submit">
+                                <i class="bi bi-check-circle"></i>
+                                Enregistrer le Budget
+                            </button>
+                            <a href="@Url.Action("GestionBudgets")" class="btn-action btn-cancel">
+                                <i class="bi bi-x-circle"></i>
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-circle me-2"></i>Succès
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="modal-icon success">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+                <p class="mb-0" id="successMessage">Opération réussie!</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-x-circle me-2"></i>Erreur
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="modal-icon error">
+                    <i class="bi bi-x-lg"></i>
+                </div>
+                <p class="mb-0" id="errorMessage">Une erreur s'est produite.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Modal -->
+<div class="modal fade" id="warningModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Avertissement
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="modal-icon warning">
+                    <i class="bi bi-exclamation-lg"></i>
+                </div>
+                <p class="mb-0" id="warningMessage">Attention!</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-warning px-4" data-bs-dismiss="modal">Compris</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Set quick amount
+        function setAmount(amount) {
+            document.getElementById('Montant_alloue').value = amount.toFixed(2);
+        }
+
+        // Set today's date
+        function setToday() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('Date_alloue').value = today;
+        }
+
+        // Modal functions
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message) {
+            document.getElementById('warningMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('warningModal')).show();
+        }
+
+        // Check for TempData messages
+        @if (TempData["Success"] != null)
+            {
+                <text>showSuccessModal("@TempData["Success"]");</text>
+        }
+            @if (TempData["Error"] != null)
+            {
+                <text>showErrorModal("@TempData["Error"]");</text>
+        }
+            @if (TempData["Warning"] != null)
+            {
+                <text>showWarningModal("@TempData["Warning"]");</text>
+        }
+
+            // Set default date to today if empty
+            document.addEventListener('DOMContentLoaded', function () {
+                const dateInput = document.getElementById('Date_alloue');
+                if (!dateInput.value) {
+                    setToday();
+                }
+            });
+    </script>
+}

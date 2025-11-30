@@ -1,0 +1,896 @@
+@{
+    ViewData["Title"] = "Connexion";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gestion Budget</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary-color: #7209b7;
+            --accent-color: #f72585;
+            --success-color: #4cc9f0;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 10px 40px rgba(67, 97, 238, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background shapes */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        body::before {
+            width: 300px;
+            height: 300px;
+            background: white;
+            top: -80px;
+            right: -80px;
+            animation-delay: 0s;
+        }
+
+        body::after {
+            width: 250px;
+            height: 250px;
+            background: white;
+            bottom: -40px;
+            left: -40px;
+            animation-delay: 3s;
+        }
+
+        @@keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 30px 25px;
+            text-align: center;
+            color: white;
+        }
+
+        /* Logo placement */
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .logo-container img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+        .logo-container .logo-placeholder {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .login-header h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.3;
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .login-body {
+            padding: 30px 25px;
+        }
+
+        .form-section-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-section-title h2 {
+            font-size: 1.3rem;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .form-section-title p {
+            color: #718096;
+            font-size: 0.85rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .form-floating {
+            margin-bottom: 18px;
+        }
+
+        .form-floating .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.9rem 0.9rem 0.9rem 2.8rem;
+            height: 54px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        .form-floating .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            background-color: white;
+        }
+
+        .form-floating label {
+            padding-left: 2.8rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .form-floating .form-control:focus~label,
+        .form-floating .form-control:not(:placeholder-shown)~label {
+            color: var(--primary-color);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 1.1rem;
+            z-index: 5;
+            transition: color 0.3s ease;
+        }
+
+        .form-floating:focus-within .input-icon {
+            color: var(--primary-color);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            z-index: 5;
+            padding: 4px;
+            transition: color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password-link {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #718096;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            padding: 5px;
+        }
+
+        .forgot-password-link:hover {
+            color: var(--primary-color);
+        }
+
+        .forgot-password-link i {
+            margin-right: 5px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 22px 0;
+            color: #a0aec0;
+            font-size: 0.8rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .divider span {
+            padding: 0 12px;
+        }
+
+        .test-accounts {
+            background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .test-accounts-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .test-account-item {
+            display: flex;
+            align-items: center;
+            padding: 9px 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 7px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .test-account-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .test-account-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 6px rgba(67, 97, 238, 0.1);
+        }
+
+        .test-account-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .test-account-icon.admin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .test-account-icon.comptable {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .test-account-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .test-account-role {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+
+        .test-account-credentials {
+            font-size: 0.7rem;
+            color: #718096;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .test-account-arrow {
+            color: #a0aec0;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-left: 5px;
+        }
+
+        /* Alert styles */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background: #fff5f5;
+            color: #c53030;
+            border-left: 4px solid #fc8181;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #276749;
+            border-left: 4px solid #68d391;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .alert span {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Back to login button */
+        .back-to-login {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #718096;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 18px;
+            transition: color 0.3s ease;
+            padding: 5px;
+        }
+
+        .back-to-login:hover {
+            color: var(--primary-color);
+        }
+
+        /* Forgot password form specific */
+        .forgot-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .forgot-icon i {
+            font-size: 1.7rem;
+            color: #e17055;
+        }
+
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            padding: 15px 25px 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .login-footer p {
+            color: #a0aec0;
+            font-size: 0.75rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Responsive improvements */
+        @@media (max-width: 480px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+                min-height: 100vh;
+                height: auto;
+            }
+
+            .login-wrapper {
+                max-width: 100%;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            .login-header {
+                padding: 25px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .login-header p {
+                font-size: 0.85rem;
+            }
+
+            .login-body {
+                padding: 25px 20px;
+            }
+
+            .logo-container {
+                width: 70px;
+                height: 70px;
+                border-radius: 15px;
+            }
+
+            .logo-container .logo-placeholder {
+                font-size: 1.8rem;
+            }
+
+            .form-section-title h2 {
+                font-size: 1.2rem;
+            }
+
+            .form-section-title p {
+                font-size: 0.8rem;
+            }
+
+            .form-floating .form-control {
+                padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+                height: 52px;
+                font-size: 0.9rem;
+            }
+
+            .input-icon {
+                left: 12px;
+                font-size: 1rem;
+            }
+
+            .password-toggle {
+                right: 12px;
+                font-size: 0.95rem;
+            }
+
+            .btn-login {
+                padding: 13px;
+                font-size: 0.95rem;
+            }
+
+            .test-accounts {
+                padding: 15px;
+            }
+
+            .test-account-item {
+                flex-direction: column;
+                text-align: center;
+                padding: 12px 10px;
+            }
+
+            .test-account-icon {
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+
+            .test-account-arrow {
+                display: none;
+            }
+
+            .test-account-credentials {
+                font-size: 0.65rem;
+            }
+        }
+
+        @@media (max-width: 360px) {
+            .login-header {
+                padding: 20px 15px;
+            }
+
+            .login-body {
+                padding: 20px 15px;
+            }
+
+            .logo-container {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-container .logo-placeholder {
+                font-size: 1.6rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.1rem;
+            }
+
+            .form-section-title h2 {
+                font-size: 1.1rem;
+            }
+
+            .test-accounts-title {
+                font-size: 0.75rem;
+            }
+
+            .test-account-role {
+                font-size: 0.75rem;
+            }
+
+            .test-account-credentials {
+                font-size: 0.6rem;
+            }
+        }
+
+        @@media (max-height: 700px) and (max-width: 480px) {
+            body {
+                align-items: flex-start;
+                padding-top: 10px;
+            }
+
+            .login-wrapper {
+                margin-top: 10px;
+            }
+
+            .login-container {
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* Touch device improvements */
+        @@media (hover: none) and (pointer: coarse) {
+            .btn-login:hover {
+                transform: none;
+            }
+
+            .test-account-item:hover {
+                border-color: #e2e8f0;
+                box-shadow: none;
+            }
+
+            .password-toggle,
+            .forgot-password-link,
+            .back-to-login {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <!-- Header with Logo -->
+            <div class="login-header">
+                <div class="logo-container">
+                    <i class="bi bi-wallet2 logo-placeholder"></i>
+                </div>
+                <h1>Gestion de Budget d'Entreprise</h1>
+                <p>Plateforme de gestion financière</p>
+            </div>
+
+            <div class="login-body">
+                <!-- Formulaire de connexion -->
+                <div id="loginForm">
+                    <div class="form-section-title">
+                        <h2>Bienvenue</h2>
+                        <p>Connectez-vous à votre compte</p>
+                    </div>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>@ViewBag.Error</span>
+                        </div>
+                    }
+
+                    @if (ViewBag.Success != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>@ViewBag.Success</span>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Login">
+                        <div class="form-floating position-relative">
+                            <i class="bi bi-envelope input-icon"></i>
+                            <input type="email" class="form-control" id="email" name="email"
+                                placeholder="votre@email.com" required>
+                            <label for="email">Adresse email</label>
+                        </div>
+
+                        <div class="form-floating position-relative">
+                            <i class="bi bi-lock input-icon"></i>
+                            <input type="password" class="form-control" id="motDePasse" name="motDePasse"
+                                placeholder="Mot de passe" required>
+                            <label for="motDePasse">Mot de passe</label>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">
+                                <i class="bi bi-eye" id="toggleIcon"></i>
+                            </button>
+                        </div>
+
+                        <button type="submit" class="btn-login">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Se connecter
+                        </button>
+                    </form>
+
+                    <a href="#" class="forgot-password-link" onclick="showForgotPassword(); return false;">
+                        <i class="bi bi-key"></i>
+                        Mot de passe oublié ?
+                    </a>
+
+                    <div class="divider">
+                        <span>Comptes de démonstration</span>
+                    </div>
+
+                    <div class="test-accounts">
+                        <div class="test-accounts-title">
+                            <i class="bi bi-info-circle"></i>
+                            Cliquez pour remplir automatiquement
+                        </div>
+                        <div class="test-account-item" onclick="fillCredentials('admin@entreprise.com', 'admin123')">
+                            <div class="test-account-icon admin">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div class="test-account-info">
+                                <div class="test-account-role">Administrateur</div>
+                                <div class="test-account-credentials">admin@entreprise.com / admin123</div>
+                            </div>
+                            <i class="bi bi-arrow-right-circle test-account-arrow"></i>
+                        </div>
+                        <div class="test-account-item"
+                            onclick="fillCredentials('comptable@entreprise.com', 'comptable123')">
+                            <div class="test-account-icon comptable">
+                                <i class="bi bi-calculator"></i>
+                            </div>
+                            <div class="test-account-info">
+                                <div class="test-account-role">Comptable</div>
+                                <div class="test-account-credentials">comptable@entreprise.com / comptable123</div>
+                            </div>
+                            <i class="bi bi-arrow-right-circle test-account-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire mot de passe oublié -->
+                <div id="forgotPasswordForm" style="display: none;">
+                    <div class="text-center">
+                        <div class="forgot-icon">
+                            <i class="bi bi-key-fill"></i>
+                        </div>
+                        <h2 style="color: #2d3748; font-weight: 600; margin-bottom: 8px; font-size: 1.3rem;">Mot de
+                            passe oublié ?</h2>
+                        <p style="color: #718096; font-size: 0.85rem; margin-bottom: 25px; line-height: 1.4;">
+                            Entrez votre email pour recevoir un lien de réinitialisation
+                        </p>
+                    </div>
+
+                    @if (ViewBag.ForgotError != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>@ViewBag.ForgotError</span>
+                        </div>
+                    }
+
+                    @if (ViewBag.ForgotSuccess != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>@ViewBag.ForgotSuccess</span>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="ForgotPassword">
+                        <div class="form-floating position-relative">
+                            <i class="bi bi-envelope input-icon"></i>
+                            <input type="email" class="form-control" id="forgotEmail" name="email"
+                                placeholder="votre@email.com" required>
+                            <label for="forgotEmail">Adresse email</label>
+                        </div>
+
+                        <button type="submit" class="btn-login"
+                            style="background: linear-gradient(135deg, #e17055 0%, #d63031 100%);">
+                            <i class="bi bi-send"></i>
+                            Envoyer le lien de réinitialisation
+                        </button>
+                    </form>
+
+                    <div class="text-center">
+                        <a href="#" class="back-to-login" onclick="showLogin(); return false;">
+                            <i class="bi bi-arrow-left"></i>
+                            Retour à la connexion
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-footer">
+                <p>&copy; @DateTime.Now.Year Gestion Budget - Tous droits réservés</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('motDePasse');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        }
+
+        // Fill credentials automatically
+        function fillCredentials(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('motDePasse').value = password;
+
+            // Visual feedback
+            const items = document.querySelectorAll('.test-account-item');
+            items.forEach(item => item.style.transform = 'scale(1)');
+            event.currentTarget.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                event.currentTarget.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // Show forgot password form
+        function showForgotPassword() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'block';
+        }
+
+        // Show login form
+        function showLogin() {
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        // Show forgot password form if there's an error or success message
+        @if (ViewBag.ForgotError != null || ViewBag.ForgotSuccess != null)
+            {
+                <text>
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('forgotPasswordForm').style.display = 'block';
+                </text>
+        }
+
+            // Adjust layout for very small screens
+            function adjustLayout() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+
+                if (width < 360 || height < 600) {
+                    document.body.style.padding = '5px';
+                    document.body.style.alignItems = 'flex-start';
+                }
+            }
+
+        // Initial adjustment
+        adjustLayout();
+
+        // Adjust on resize
+        window.addEventListener('resize', adjustLayout);
+    </script>
+</body>
+
+</html>

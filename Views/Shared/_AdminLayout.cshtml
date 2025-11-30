@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gestion Budget Entreprise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Variables CSS pour les couleurs */
+        :root {
+            --primary-color: #4A90A4;
+            --primary-dark: #3A7A94;
+            --primary-light: #E8F4F8;
+            --secondary-color: #6C8EA4;
+            --accent-color: #5BA4B5;
+            --success-color: #4CAF50;
+            --warning-color: #FF9800;
+            --danger-color: #F44336;
+            --info-color: #2196F3;
+            --sidebar-bg: #F8FAFC;
+            --sidebar-border: #E2E8F0;
+            --sidebar-text: #475569;
+            --sidebar-hover: #EDF2F7;
+            --sidebar-active: #4A90A4;
+            --body-bg: #F1F5F9;
+            --card-bg: #FFFFFF;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --text-muted: #94A3B8;
+            --border-color: #E2E8F0;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            padding: 0;
+            border-right: 1px solid var(--sidebar-border);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--sidebar-border);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .sidebar-brand h4 {
+            font-weight: 700;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-brand h4 i {
+            font-size: 1.5rem;
+        }
+
+        .sidebar-brand small {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.15rem 0.75rem;
+        }
+
+        .nav-link {
+            color: var(--sidebar-text);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: var(--sidebar-hover);
+            text-decoration: none;
+        }
+
+        .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .section-title {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 1.5rem 1rem 0.5rem 1rem;
+            padding: 0.5rem 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--body-bg);
+            transition: var(--transition);
+        }
+
+        .top-bar {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .content-area {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary-light);
+            border-radius: 2rem;
+            color: var(--primary-dark);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #D32F2F 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Mobile Toggle Button */
+        .mobile-toggle {
+            display: none;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-toggle:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Alerts */
+        .alert {
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            color: #2E7D32;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            color: #C62828;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+            color: #F57F17;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            color: #1565C0;
+        }
+
+        .alert i {
+            font-size: 1.25rem;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header.modal-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #43A047 100%);
+            color: white;
+        }
+
+        .modal-header.modal-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #E53935 100%);
+            color: white;
+        }
+
+        .modal-header.modal-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #FB8C00 100%);
+            color: white;
+        }
+
+        .modal-header.modal-info {
+            background: linear-gradient(135deg, var(--info-color) 0%, #1E88E5 100%);
+            color: white;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-title i {
+            font-size: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--body-bg);
+        }
+
+        .btn-modal {
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        /* Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--sidebar-bg);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Sidebar Overlay for Mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @@media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: var(--shadow-lg);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .top-bar {
+                padding: 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .user-badge span {
+                display: none;
+            }
+        }
+
+        @@media (max-width: 767.98px) {
+            .sidebar {
+                width: 260px;
+            }
+
+            .top-bar-title {
+                font-size: 0.95rem;
+            }
+
+            .user-info {
+                gap: 0.5rem;
+            }
+
+            .logout-btn span {
+                display: none;
+            }
+
+            .logout-btn {
+                padding: 0.5rem;
+            }
+        }
+
+        @@media (max-width: 575.98px) {
+            .sidebar {
+                width: 100%;
+            }
+
+            .sidebar-brand h4 {
+                font-size: 1.1rem;
+            }
+
+            .nav-link {
+                padding: 0.65rem 0.9rem;
+                font-size: 0.85rem;
+            }
+
+            .content-area {
+                padding: 0.75rem;
+            }
+
+            .alert {
+                font-size: 0.85rem;
+                padding: 0.875rem 1rem;
+            }
+        }
+
+        /* Animation */
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h4 class="mb-0">
+                <i class="bi bi-graph-up-arrow"></i>
+                Gestion Budget
+            </h4>
+            <small>Panneau Administrateur</small>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
+                        href="@Url.Action("Dashboard", "Admin")">
+                        <i class="bi bi-house-door"></i>
+                        Tableau de Bord
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <div class="section-title">Gestion des Utilisateurs</div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "GestionComptables" || ViewContext.RouteData.Values["Action"]?.ToString() == "AjouterComptable" || ViewContext.RouteData.Values["Action"]?.ToString() == "ModifierComptable" ? "active" : "")"
+                        href="@Url.Action("GestionComptables", "Admin")">
+                        <i class="bi bi-people"></i>
+                        Gestion des Comptables
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <div class="section-title">Gestion des Budgets</div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "GestionBudgets" || ViewContext.RouteData.Values["Action"]?.ToString() == "ModifierBudget" || ViewContext.RouteData.Values["Action"]?.ToString() == "DefinirBudget" ? "active" : "")"
+                        href="@Url.Action("GestionBudgets", "Admin")">
+                        <i class="bi bi-wallet2"></i>
+                        Gestion des Budgets
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "ConsulterDepenses" ? "active" : "")"
+                        href="@Url.Action("ConsulterDepenses", "Admin")">
+                        <i class="bi bi-cash-stack"></i>
+                        Consulter les Depenses
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <div class="section-title">Consultation</div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Rapports" ? "active" : "")"
+                        href="@Url.Action("Rapports", "Admin")">
+                        <i class="bi bi-bar-chart-line"></i>
+                        Rapports & Statistiques
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <div class="section-title">Session</div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="@Url.Action("Logout", "Home")">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Deconnexion
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="mobile-toggle" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <span class="top-bar-title">@ViewData["Title"]</span>
+            </div>
+            <div class="user-info">
+                <div class="user-badge">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Administrateur</span>
+                </div>
+                <a href="@Url.Action("Logout", "Home")" class="logout-btn">
+                    <i class="bi bi-power"></i>
+                    <span>Deconnexion</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Messages d'alerte avec icones -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>@TempData["Success"]</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>@TempData["Error"]</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["Warning"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>@TempData["Warning"]</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["Info"] != null)
+            {
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span>@TempData["Info"]</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Modal Succes -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-success">
+                    <h5 class="modal-title">
+                        <i class="bi bi-check-circle"></i>
+                        Succes
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="successModalBody">
+                    Operation effectuee avec succes.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-modal" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Erreur -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-danger">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Erreur
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="errorModalBody">
+                    Une erreur s'est produite.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-modal" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Avertissement -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-warning">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-circle"></i>
+                        Avertissement
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="warningModalBody">
+                    Etes-vous sur de vouloir continuer ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-modal" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-warning btn-modal" id="warningModalConfirm">Confirmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Information -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-info">
+                    <h5 class="modal-title">
+                        <i class="bi bi-info-circle"></i>
+                        Information
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="infoModalBody">
+                    Information importante.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info btn-modal text-white"
+                        data-bs-dismiss="modal">Compris</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmation de Suppression -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-danger">
+                    <h5 class="modal-title">
+                        <i class="bi bi-trash3"></i>
+                        Confirmer la Suppression
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="deleteModalBody">
+                    Etes-vous sur de vouloir supprimer cet element ? Cette action est irreversible.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-modal" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger btn-modal" id="deleteModalConfirm">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle Sidebar Mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Fermer sidebar si on clique en dehors
+        document.addEventListener('click', function (e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            if (window.innerWidth < 992 && sidebar.classList.contains('active')) {
+                if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+                    toggleSidebar();
+                }
+            }
+        });
+
+        // Fonctions pour afficher les modals
+        function showSuccessModal(message) {
+            document.getElementById('successModalBody').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorModalBody').textContent = message;
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message, onConfirm) {
+            document.getElementById('warningModalBody').textContent = message;
+            const modal = new bootstrap.Modal(document.getElementById('warningModal'));
+            const confirmBtn = document.getElementById('warningModalConfirm');
+            confirmBtn.onclick = function () {
+                modal.hide();
+                if (onConfirm) onConfirm();
+            };
+            modal.show();
+        }
+
+        function showInfoModal(message) {
+            document.getElementById('infoModalBody').textContent = message;
+            new bootstrap.Modal(document.getElementById('infoModal')).show();
+        }
+
+        function showDeleteModal(message, onConfirm) {
+            document.getElementById('deleteModalBody').textContent = message;
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            const confirmBtn = document.getElementById('deleteModalConfirm');
+            confirmBtn.onclick = function () {
+                modal.hide();
+                if (onConfirm) onConfirm();
+            };
+            modal.show();
+        }
+
+        // Auto-fermer les alertes apres 5 secondes
+        document.addEventListener('DOMContentLoaded', function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function (alert) {
+                setTimeout(function () {
+                    const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

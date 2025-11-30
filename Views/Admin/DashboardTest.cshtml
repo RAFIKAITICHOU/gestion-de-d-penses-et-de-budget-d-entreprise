@@ -1,0 +1,79 @@
+@{
+    ViewData["Title"] = "Test Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1>Test Dashboard - Diagnostic</h1>
+
+    <!-- Test 1: Données brutes -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Données ViewBag</h5>
+        </div>
+        <div class="card-body">
+            <h6>DepensesParCategorie:</h6>
+            <pre>@Json.Serialize(ViewBag.DepensesParCategorie)</pre>
+
+            <h6>DepensesMensuelles:</h6>
+            <pre>@Json.Serialize(ViewBag.DepensesMensuelles)</pre>
+
+            <h6>BudgetTotal: @ViewBag.BudgetTotal</h6>
+            <h6>DepensesTotal: @ViewBag.DepensesTotal</h6>
+        </div>
+    </div>
+
+    <!-- Test 2: Graphique simple -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Test Graphique Simple</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="testChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        console.log('=== DÉBUT DU DIAGNOSTIC ===');
+
+        // Test 1: Chart.js est-il chargé ?
+        console.log('Chart.js disponible:', typeof Chart !== 'undefined');
+
+        // Test 2: Les données sont-elles présentes ?
+        console.log('DepensesParCategorie:', @Html.Raw(Json.Serialize(ViewBag.DepensesParCategorie)));
+        console.log('DepensesMensuelles:', @Html.Raw(Json.Serialize(ViewBag.DepensesMensuelles)));
+
+        // Test 3: Créer un graphique de test très simple
+        const testCtx = document.getElementById('testChart');
+        if (testCtx) {
+            console.log('Canvas testChart trouvé');
+
+            // Données de test fixes
+            const testData = {
+                labels: ['Jan', 'Feb', 'Mar'],
+                datasets: [{
+                    label: 'Test Data',
+                    data: [10, 20, 30],
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                }]
+            };
+
+            try {
+                new Chart(testCtx, {
+                    type: 'bar',
+                    data: testData
+                });
+                console.log('Graphique de test créé avec succès');
+            } catch (error) {
+                console.error('Erreur création graphique test:', error);
+            }
+        } else {
+            console.error('Canvas testChart NON TROUVÉ');
+        }
+
+        console.log('=== FIN DU DIAGNOSTIC ===');
+    </script>
+}

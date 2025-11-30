@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Tableau de Bord Comptable";
+    Layout = "~/Views/Shared/_ComptableLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Tableau de Bord - Comptable</h2>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Dépenses Enregistrées</h5>
+                    <p class="card-text display-4">@ViewBag.Stats.TotalDepenses</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Total Dépenses</h5>
+                    <p class="card-text display-4">@ViewBag.Stats.MontantTotalDepenses.ToString("C")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Budget Actuel</h5>
+                    <p class="card-text display-4">@ViewBag.Stats.BudgetActuel.ToString("C")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Actions Rapides</h5>
+                </div>
+                <div class="card-body">
+                    <a href="@Url.Action("GestionDepenses")" class="btn btn-outline-primary btn-block mb-2">Gérer les Dépenses</a>
+                    <a href="@Url.Action("ConsulterBudgets")" class="btn btn-outline-success btn-block mb-2">Consulter les Budgets</a>
+                    <a href="@Url.Action("Rapports")" class="btn btn-outline-info btn-block mb-2">Consulter les Rapports</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
