@@ -226,7 +226,7 @@ dotnet run
 Voici quelques aperçus de l’application :
 
 ### 📌 Page d’accueil
-![Accueil](./screenshots/accueil.png)
+![Accueil](./images/accueil.png)
 
 ### 📌 Tableau de bord Administrateur
 ![Dashboard Admin](./images/dashboard_admin.png)
