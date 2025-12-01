@@ -221,6 +221,25 @@ dotnet run
 * Historique
 * Export des données
 
+## 🖼️ Captures d’Écran
+
+Voici quelques aperçus de l’application :
+
+### 📌 Page d’accueil
+![Accueil](./screenshots/accueil.png)
+
+### 📌 Tableau de bord Administrateur
+![Dashboard Admin](./images/dashboard_admin.png)
+
+### 📌 Gestion des Comptables
+![Comptables](./images/gestion_comptables.png)
+
+### 📌 Gestion des Dépenses (Comptable)
+![Dépenses](./images/gestion_depenses.png)
+
+---
+
+
 ## 📁 Structure du Projet
 
 ```
