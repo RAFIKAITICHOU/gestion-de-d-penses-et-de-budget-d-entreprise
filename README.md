@@ -234,7 +234,7 @@ Voici quelques aperçus de l’application :
 ### 📌 Gestion des Comptables
 ![Comptables](./images/gestion_comptables.png)
 
-### 📌 Gestion des Dépenses (Comptable)
+### 📌 Gestion des Dépenses
 ![Dépenses](./images/gestion_depenses.png)
 
 ---
@@ -254,8 +254,6 @@ Ce diagramme montre la structure des entités principales du projet :
 ![Class Diagram](./images/uml/classdiagram.png)
 
 ---
-
-> 📁 **Note :** Place les images UML dans un dossier `uml/` à la racine de ton projet GitHub.
 
 
 ## 📁 Structure du Projet
