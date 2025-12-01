@@ -47,7 +47,7 @@ Développer une application web de gestion budgétaire permettant aux entreprise
 
 | Technologie                      | Version | Rôle                        |
 | -------------------------------- | ------- | --------------------------- |
-| ASP.NET Core                     | 7.0     | Framework principal         |
+| ASP.NET Core                     | 10.0     | Framework principal         |
 | C#                               | 11.0    | Langage de programmation    |
 | Entity Framework Core            | 7.0     | ORM pour la base de données |
 | Pomelo.EntityFrameworkCore.MySql | 7.0     | Provider MySQL              |
@@ -57,8 +57,7 @@ Développer une application web de gestion budgétaire permettant aux entreprise
 
 | Technologie     | Version | Rôle                                  |
 | --------------- | ------- | ------------------------------------- |
-| MySQL           | 8.0+    | Système de gestion de base de données |
-| MySQL Workbench | -       | Administration et modélisation        |
+| MySQL           | 8.0+    | Système de gestion de base de données | 
 
 ### Outils de Développement
 
@@ -74,7 +73,7 @@ Développer une application web de gestion budgétaire permettant aux entreprise
 ### Schéma de la Base de Données
 
 ```sql
-CREATE DATABASE gestionbudget
+CREATE DATABASE gestion_budget_entreprise_v2
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 ```
@@ -90,9 +89,7 @@ CREATE TABLE Administrateurs (
     Prenom VARCHAR(50) NOT NULL,
     Email VARCHAR(100) NOT NULL UNIQUE,
     MotDePasse VARCHAR(255) NOT NULL,
-    DateCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
-    DateModification DATETIME NULL,
-    EstActif BOOLEAN DEFAULT TRUE
+    DateCreation DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -105,9 +102,7 @@ CREATE TABLE Comptables (
     Prenom VARCHAR(50) NOT NULL,
     Email VARCHAR(100) NOT NULL UNIQUE,
     MotDePasse VARCHAR(255) NOT NULL,
-    DateCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
-    DateModification DATETIME NULL,
-    EstActif BOOLEAN DEFAULT TRUE
+    DateCreation DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -150,26 +145,18 @@ CREATE TABLE Rapports (
 
 ### Prérequis
 
-* .NET SDK 7.0
+* .NET SDK 10.0
 * MySQL Server 8.0+
 * Git
 
 ### 1. Cloner le projet
 
 ```bash
-git clone [URL_DU_DEPOT]
+git clone https://github.com/RAFIKAITICHOU/gestion-de-d-penses-et-de-budget-d-entreprise.git
 cd GestionBudget_V2
 ```
 
-### 2. Configurer la base MySQL
-
-```bash
-mysql -u root -p
-CREATE DATABASE gestionbudget CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-EXIT;
-```
-
-### 3. Configurer l'application (`appsettings.json`)
+### 2. Configurer l'application (`appsettings.json`)
 
 ```json
 {
@@ -207,6 +194,7 @@ dotnet run
 ```
 
 ### 7. Accéder à l'application
+💡 Remarque : Les ports peuvent varier selon votre configuration. Par défaut, ASP.NET Core utilise généralement 5000 pour HTTP et 5001 pour HTTPS, mais votre application peut démarrer sur d'autres ports si ceux-ci sont déjà utilisés.
 
 * [https://localhost:5001](https://localhost:5001)
 * [http://localhost:5000](http://localhost:5000)
@@ -217,11 +205,6 @@ dotnet run
 
 * Email : [admin@entreprise.com](mailto:admin@entreprise.com)
 * Mot de passe : admin123
-
-**Comptable**
-
-* Email : [comptable@entreprise.com](mailto:comptable@entreprise.com)
-* Mot de passe : comptable123
 
 ## 🔧 Fonctionnalités par Rôle
 
@@ -295,3 +278,4 @@ AIT ICHOU RAFIK
 Équipe de développement, communauté .NET, contributeurs.
 
 Dernière mise à jour : Novembre 2024
+
