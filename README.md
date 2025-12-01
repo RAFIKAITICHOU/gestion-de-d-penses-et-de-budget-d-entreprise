@@ -238,6 +238,24 @@ Voici quelques aperçus de l’application :
 ![Dépenses](./images/gestion_depenses.png)
 
 ---
+## 🧠 Diagrammes UML
+
+### 📘 Diagramme de Cas d’Utilisation (Use Case)
+Voici le diagramme UML représentant les interactions principales entre les acteurs et le système :
+
+![Use Case](./images/uml/usecase1.png)
+![Use Case](./images/uml/usecase2.png)
+
+---
+
+### 📗 Diagramme de Classe
+Ce diagramme montre la structure des entités principales du projet :
+
+![Class Diagram](./images/uml/classdiagram.png)
+
+---
+
+> 📁 **Note :** Place les images UML dans un dossier `uml/` à la racine de ton projet GitHub.
 
 
 ## 📁 Structure du Projet

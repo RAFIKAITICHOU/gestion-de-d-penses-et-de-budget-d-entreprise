@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestionBudget_V2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b53a1ad0eee6c2f1eeb5118423ea02e89de4405")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ad5ff79f8591a94664454361077d43394cb857f")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestionBudget_V2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestionBudget_V2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
