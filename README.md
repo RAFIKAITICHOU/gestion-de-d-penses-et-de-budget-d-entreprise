@@ -277,5 +277,6 @@ AIT ICHOU RAFIK
 
 Équipe de développement, communauté .NET, contributeurs.
 
-Dernière mise à jour : Novembre 2024
+Dernière mise à jour : Novembre 2025
+
 
