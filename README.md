@@ -48,9 +48,9 @@ Développer une application web de gestion budgétaire permettant aux entreprise
 | Technologie                      | Version | Rôle                        |
 | -------------------------------- | ------- | --------------------------- |
 | ASP.NET Core                     | 10.0     | Framework principal         |
-| C#                               | 11.0    | Langage de programmation    |
-| Entity Framework Core            | 7.0     | ORM pour la base de données |
-| Pomelo.EntityFrameworkCore.MySql | 7.0     | Provider MySQL              |
+| C#                               | 14.0    | Langage de programmation    |
+| Entity Framework Core            | 10.0     | ORM pour la base de données |
+| Pomelo.EntityFrameworkCore.MySql | 9.0     | Provider MySQL              |
 | BCrypt.Net-Next                  | 4.0.3   | Hachage sécurisé            |
 
 ### Base de Données
@@ -278,5 +278,6 @@ AIT ICHOU RAFIK
 Équipe de développement, communauté .NET, contributeurs.
 
 Dernière mise à jour : Novembre 2025
+
 
 
