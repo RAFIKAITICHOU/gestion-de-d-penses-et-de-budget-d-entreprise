@@ -74,12 +74,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcHRhYmxlL0Fqb3V0ZXJEZXBlbnNlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/Views/Comptable/ConsulterBudgets.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcHRhYmxlL0NvbnN1bHRlckJ1ZGdldHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/Views/Comptable/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcHRhYmxlL0Rhc2hib2FyZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/Views/Comptable/GestionDepenses.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcHRhYmxlL0dlc3Rpb25EZXBlbnNlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/Views/Comptable/Rapports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcHRhYmxlL1JhcHBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/Views/Home/Index.cshtml]

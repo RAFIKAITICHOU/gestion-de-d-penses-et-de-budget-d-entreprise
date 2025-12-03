@@ -1,0 +1,103 @@
+@model List<GestionBudget_V2.Models.Budget>
+@{
+    ViewData["Title"] = "Consulter les Budgets";
+    Layout = "~/Views/Shared/_ComptableLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">
+            <i class="bi bi-wallet2 me-2"></i>Consulter les Budgets
+        </h1>
+    </div>
+
+    <!-- Statistiques des budgets -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card glass-card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small mb-1">Budget Total Alloué</div>
+                            <div class="h4 mb-0 fw-bold text-primary">
+                                @Model.Sum(b => b.Montant_alloue).ToString("N2") MAD
+                            </div>
+                        </div>
+                        <i class="bi bi-wallet-fill fs-1 text-primary opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card glass-card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small mb-1">Nombre de Budgets</div>
+                            <div class="h4 mb-0 fw-bold text-success">
+                                @Model.Count
+                            </div>
+                        </div>
+                        <i class="bi bi-bar-chart-fill fs-1 text-success opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des budgets -->
+    <div class="card glass-card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-table me-1"></i>Liste des Budgets
+            </h6>
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th><i class="bi bi-hash me-1"></i>ID</th>
+                                <th><i class="bi bi-wallet me-1"></i>Montant Alloué</th>
+                                <th><i class="bi bi-calendar me-1"></i>Date d'Allocation</th>
+                                <th><i class="bi bi-clock me-1"></i>Date de Création</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var budget in Model.OrderByDescending(b => b.Date_alloue))
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            <i class="bi bi-hash me-1"></i>@budget.Id_budget
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold text-success">
+                                        @budget.Montant_alloue.ToString("N2") MAD
+                                    </td>
+                                    <td>
+                                        @budget.Date_alloue.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td class="text-muted">
+                                        @budget.DateCreation.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+                    <h5 class="text-muted">Aucun budget enregistré</h5>
+                    <p class="text-muted small">Il n'y a actuellement aucun budget à consulter.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

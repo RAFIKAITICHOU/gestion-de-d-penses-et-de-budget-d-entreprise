@@ -44,23 +44,23 @@ using (var scope = app.Services.CreateScope())
             context.Administrateurs.Add(admin);
             context.SaveChanges();
 
-            Console.WriteLine("✅ Compte ADMINISTRATEUR créé avec succès !");
-            Console.WriteLine($"📧 Email: admin@entreprise.com");
-            Console.WriteLine($"🔑 Mot de passe: admin123");
-            Console.WriteLine("👤 Type: Administrateur");
+            Console.WriteLine("Compte ADMINISTRATEUR créé avec succès !");
+            Console.WriteLine($"Email: admin@entreprise.com");
+            Console.WriteLine($"Mot de passe: admin123");
+            Console.WriteLine("Type: Administrateur");
         }
         else
         {
-            Console.WriteLine("⚠️  Le compte administrateur existe déjà.");
+            Console.WriteLine("Le compte administrateur existe déjà.");
         }
-        
+
         // Optionnel: Vérifier aussi s'il y a des comptables
         var comptableCount = context.Comptables.Count();
-        Console.WriteLine($"📊 Nombre de comptables: {comptableCount}");
+        Console.WriteLine($"Nombre de comptables: {comptableCount}");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"❌ Erreur lors de la création du compte administrateur: {ex.Message}");
+        Console.WriteLine($"Erreur lors de la création du compte administrateur: {ex.Message}");
     }
 }
 

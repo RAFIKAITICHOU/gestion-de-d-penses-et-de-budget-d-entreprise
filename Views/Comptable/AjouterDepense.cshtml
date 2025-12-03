@@ -8,15 +8,15 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Ajouter une Dépense</h1>
         <a href="@Url.Action("GestionDepenses")" class="btn btn-secondary">
-            ↩ Retour à la liste
+            <i class="bi bi-arrow-left-circle me-1"></i> Retour à la liste
         </a>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card shadow">
+            <div class="card shadow glass-card">
                 <div class="card-header bg-white py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">📝 Nouvelle Dépense</h6>
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-journal-plus me-1"></i> Nouvelle Dépense</h6>
                 </div>
                 <div class="card-body">
                     <form asp-action="AjouterDepense">
@@ -60,11 +60,11 @@
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                💾 Enregistrer la Dépense
+                            <button type="submit" class="btn btn-primary btn-glass btn-lg">
+                                <i class="bi bi-save me-1"></i> Enregistrer la Dépense
                             </button>
-                            <a href="@Url.Action("GestionDepenses")" class="btn btn-secondary btn-lg">
-                                ❌ Annuler
+                            <a href="@Url.Action("GestionDepenses")" class="btn btn-ghost btn-lg">
+                                <i class="bi bi-x-circle me-1"></i> Annuler
                             </a>
                         </div>
                     </form>

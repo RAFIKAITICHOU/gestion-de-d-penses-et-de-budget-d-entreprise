@@ -59,6 +59,24 @@ namespace GestionBudget_V2.Controllers
             return View(depense);
         }
 
+        // Supprimer une dépense (Comptable)
+        [HttpPost]
+        public IActionResult SupprimerDepense(int id)
+        {
+            var dep = _context.Depenses.Find(id);
+            if (dep == null) return NotFound();
+            try
+            {
+                _context.Depenses.Remove(dep);
+                _context.SaveChanges();
+            }
+            catch
+            {
+                // log or handle error
+            }
+            return RedirectToAction("GestionDepenses");
+        }
+
         // Consulter les budgets
         public IActionResult ConsulterBudgets()
         {

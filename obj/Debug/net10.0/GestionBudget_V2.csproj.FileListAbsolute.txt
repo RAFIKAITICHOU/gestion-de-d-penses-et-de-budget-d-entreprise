@@ -214,3 +214,4 @@
 /Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/bin/Debug/net10.0/runtimes/win-x86/native/zlib1.dll
 /Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/obj/Debug/net10.0/compressed/qdrkc74a3e-{0}-ifm5rajydl-ifm5rajydl.gz
 /Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/obj/Debug/net10.0/GestionBudget_V2.sourcelink.json
+/Users/ichou/Projects/GestionBudgetEntreprise/GestionBudget_V2/obj/Debug/net10.0/compressed/7fqu45gxy2-{0}-kj6j0r15bg-kj6j0r15bg.gz
