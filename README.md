@@ -229,7 +229,7 @@ Voici quelques aperçus de l’application :
 ![Accueil](./images/accueil.png)
 
 ### 📌 Tableau de bord Administrateur
-![Dashboard Admin](./images/dashboard_admin.png)
+![Dashboard Admin](./images/dashboard-admin.png)
 ![Dashboard Admin](./images/dashboardadmin.png)
 
 ### 📌 Gestion des Comptables
