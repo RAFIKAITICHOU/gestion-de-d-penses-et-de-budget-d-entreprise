@@ -230,12 +230,16 @@ Voici quelques aperçus de l’application :
 
 ### 📌 Tableau de bord Administrateur
 ![Dashboard Admin](./images/dashboard_admin.png)
+![Dashboard Admin](./images/dashboardadmin.png)
 
 ### 📌 Gestion des Comptables
 ![Comptables](./images/gestion_comptables.png)
 
 ### 📌 Gestion des Dépenses
 ![Dépenses](./images/gestion_depenses.png)
+
+### 📌 Tableau de Bord Comptable
+![Dépenses](./images/BordComptable.png)
 
 ---
 ## 🧠 Diagrammes UML

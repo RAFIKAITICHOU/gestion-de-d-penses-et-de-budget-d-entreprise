@@ -1,0 +1,862 @@
+@model GestionBudget_V2.Models.Depense
+@{
+    ViewData["Title"] = "Modifier une Dépense";
+    Layout = "~/Views/Shared/_ComptableLayout.cshtml";
+}
+
+<style>
+    :root {
+        --primary-color: #5B8DEF;
+        --primary-light: #E8F0FE;
+        --success-color: #1cc88a;
+        --success-light: #d4edda;
+        --info-color: #36b9cc;
+        --info-light: #d1ecf1;
+        --warning-color: #f6c23e;
+        --warning-light: #fff3cd;
+        --danger-color: #e74a3b;
+        --danger-light: #f8d7da;
+        --gray-color: #858796;
+        --light-bg: #f8f9fc;
+        --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #4A7AD8 100%);
+        border-radius: 16px;
+        padding: 1.75rem 2rem;
+        margin-bottom: 1.5rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        box-shadow: 0 4px 15px rgba(91, 141, 239, 0.3);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .back-btn {
+        background: white;
+        color: var(--primary-color);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .back-btn:hover {
+        background: var(--primary-light);
+        color: #4A7AD8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        border: 1px solid #E5E7EB;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-section {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #F3F4F6;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+    }
+
+    .section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1F2937;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .input-group-text {
+        background: var(--light-bg);
+        border: 1px solid #D1D5DB;
+        border-right: none;
+        color: var(--gray-color);
+    }
+
+    .form-control,
+    .form-select {
+        border: 1px solid #D1D5DB;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .input-group .form-control {
+        border-left: none;
+        border-radius: 0 10px 10px 0;
+    }
+
+    .input-group .input-group-text {
+        border-radius: 10px 0 0 10px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.15);
+    }
+
+    .input-group .form-control:focus {
+        border-left: none;
+    }
+
+    .input-group:focus-within .input-group-text {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    /* Quick buttons */
+    .quick-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .quick-btn {
+        background: var(--light-bg);
+        border: 1px solid #E5E7EB;
+        color: var(--gray-color);
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .quick-btn:hover {
+        background: var(--primary-light);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    /* Category selection */
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .category-option {
+        position: relative;
+    }
+
+    .category-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .category-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        background: var(--light-bg);
+        border: 2px solid #E5E7EB;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .category-label:hover {
+        border-color: #D1D5DB;
+        background: white;
+    }
+
+    .category-option input:checked+.category-label {
+        border-color: var(--primary-color);
+        background: var(--primary-light);
+    }
+
+    .category-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .category-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .cat-fournitures .category-icon {
+        background: #DBEAFE;
+        color: #2563EB;
+    }
+
+    .cat-equipement .category-icon {
+        background: #F3E8FF;
+        color: #9333EA;
+    }
+
+    .cat-services .category-icon {
+        background: #D1FAE5;
+        color: #059669;
+    }
+
+    .cat-formation .category-icon {
+        background: #FEF3C7;
+        color: #D97706;
+    }
+
+    .cat-deplacement .category-icon {
+        background: #FCE7F3;
+        color: #DB2777;
+    }
+
+    .cat-salaires .category-icon {
+        background: #CFFAFE;
+        color: #0891B2;
+    }
+
+    .cat-autre .category-icon {
+        background: #F3F4F6;
+        color: #6B7280;
+    }
+
+    /* Info card */
+    .info-card {
+        background: linear-gradient(135deg, var(--primary-light) 0%, #D4E4FD 100%);
+        border: 1px solid var(--primary-color);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .info-card-icon {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 1.25rem;
+    }
+
+    .info-card-title {
+        font-weight: 700;
+        color: #1e40af;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .info-card-content {
+        color: #1e3a8a;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .info-card-content strong {
+        color: var(--primary-color);
+    }
+
+    /* Expense summary card */
+    .expense-summary {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #E5E7EB;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .expense-summary-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .expense-detail {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed #E5E7EB;
+    }
+
+    .expense-detail:last-child {
+        border-bottom: none;
+    }
+
+    .expense-detail-label {
+        color: var(--gray-color);
+        font-size: 0.85rem;
+    }
+
+    .expense-detail-value {
+        font-weight: 600;
+        color: #1F2937;
+        font-size: 0.9rem;
+    }
+
+    .expense-detail-value.amount {
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+
+    /* Buttons */
+    .btn-submit {
+        background: linear-gradient(135deg, var(--success-color) 0%, #17a673 100%);
+        color: white;
+        border: none;
+        padding: 0.85rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(28, 200, 138, 0.4);
+        color: white;
+    }
+
+    .btn-cancel {
+        background: var(--light-bg);
+        color: var(--gray-color);
+        border: 1px solid #D1D5DB;
+        padding: 0.85rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: #E5E7EB;
+        color: #374151;
+    }
+
+    /* Validation */
+    .validation-alert {
+        background: var(--danger-light);
+        border: 1px solid #f5c6cb;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .validation-alert i {
+        color: var(--danger-color);
+        font-size: 1.25rem;
+        margin-top: 0.1rem;
+    }
+
+    .validation-alert ul {
+        margin: 0;
+        padding-left: 1.25rem;
+        color: var(--danger-color);
+        font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @@media
+    (max-width: 768px) {
+        .page-header {
+            padding: 1.25rem;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .back-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .form-section {
+            padding: 1.25rem;
+        }
+
+        .category-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .btn-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Modals */
+    .modal-content {
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        border-bottom: none;
+        padding: 1.5rem 1.5rem 0.5rem;
+    }
+
+    .modal-body {
+        padding: 1rem 1.5rem;
+        text-align: center;
+    }
+
+    .modal-footer {
+        border-top: none;
+        padding: 0.5rem 1.5rem 1.5rem;
+        justify-content: center;
+    }
+
+    .modal-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1rem;
+    }
+
+    .modal-icon.success {
+        background: var(--success-light);
+        color: var(--success-color);
+    }
+
+    .modal-icon.error {
+        background: var(--danger-light);
+        color: var(--danger-color);
+    }
+
+    .modal-icon.warning {
+        background: var(--warning-light);
+        color: var(--warning-color);
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="page-header">
+        <h1>
+            <div class="header-icon">
+                <i class="bi bi-pencil-square"></i>
+            </div>
+            Modifier la Depense
+        </h1>
+        <a href="@Url.Action("GestionDepenses")" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Retour a la liste
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Validation Errors -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="validation-alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div asp-validation-summary="All"></div>
+                </div>
+            }
+
+            <!-- Form -->
+            <form asp-action="ModifierDepense" method="post" id="editExpenseForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id_depense" />
+
+                <!-- Montant et Date -->
+                <div class="form-card">
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <i class="bi bi-cash-stack"></i> Montant et Date
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Montant" class="form-label">Montant *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                                    <input asp-for="Montant" type="number" step="0.01" class="form-control"
+                                        placeholder="0.00" min="0.01" required id="montantInput" />
+                                </div>
+                                <span asp-validation-for="Montant" class="text-danger small"></span>
+                                <div class="quick-buttons">
+                                    <button type="button" class="quick-btn" onclick="setMontant(500)">500 DH</button>
+                                    <button type="button" class="quick-btn" onclick="setMontant(1000)">1 000 DH</button>
+                                    <button type="button" class="quick-btn" onclick="setMontant(2500)">2 500 DH</button>
+                                    <button type="button" class="quick-btn" onclick="setMontant(5000)">5 000 DH</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Date_depense" class="form-label">Date de la Depense *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                                    <input asp-for="Date_depense" type="date" class="form-control" required
+                                        id="dateInput" />
+                                </div>
+                                <span asp-validation-for="Date_depense" class="text-danger small"></span>
+                                <div class="quick-buttons">
+                                    <button type="button" class="quick-btn" onclick="setToday()">
+                                        <i class="bi bi-calendar-check me-1"></i>Aujourd'hui
+                                    </button>
+                                    <button type="button" class="quick-btn" onclick="setYesterday()">
+                                        <i class="bi bi-calendar-minus me-1"></i>Hier
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categorie -->
+                <div class="form-card">
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <i class="bi bi-tag"></i> Categorie
+                        </h5>
+                        <div class="category-grid">
+                            <div class="category-option cat-fournitures">
+                                <input type="radio" name="Categorie" id="cat-fournitures" value="Fournitures"
+                                    @(Model.Categorie == "Fournitures" ? "checked" : "") required />
+                                <label for="cat-fournitures" class="category-label">
+                                    <div class="category-icon"><i class="bi bi-box-seam"></i></div>
+                                    <span class="category-name">Fournitures</span>
+                                </label>
+                            </div>
+                            <div class="category-option cat-equipement">
+                                <input type="radio" name="Categorie" id="cat-equipement" value="Équipement"
+                                    @(Model.Categorie == "Équipement" ? "checked" : "") />
+                                <label for="cat-equipement" class="category-label">
+                                    <div class="category-icon"><i class="bi bi-pc-display"></i></div>
+                                    <span class="category-name">Equipement</span>
+                                </label>
+                            </div>
+                            <div class="category-option cat-services">
+                                <input type="radio" name="Categorie" id="cat-services" value="Services"
+                                    @(Model.Categorie == "Services" ? "checked" : "") />
+                                <label for="cat-services" class="category-label">
+                                    <div class="category-icon"><i class="bi bi-gear"></i></div>
+                                    <span class="category-name">Services</span>
+                                </label>
+                            </div>
+                            <div class="category-option cat-formation">
+                                <input type="radio" name="Categorie" id="cat-formation" value="Formation"
+                                    @(Model.Categorie == "Formation" ? "checked" : "") />
+                                <label for="cat-formation" class="category-label">
+                                    <div class="category-icon"><i class="bi bi-mortarboard"></i></div>
+                                    <span class="category-name">Formation</span>
+                                </label>
+                            </div>
+                            <div class="category-option cat-deplacement">
+                                <input type="radio" name="Categorie" id="cat-deplacement" value="Déplacement"
+                                    @(Model.Categorie == "Déplacement" ? "checked" : "") />
+                                <label for="cat-deplacement" class="category-label">
+                                    <div class="category-icon"><i class="bi bi-car-front"></i></div>
+                                    <span class="category-name">Deplacement</span>
+                                </label>
+                            </div>
+                            <div class="category-option cat-salaires">
+                                <input type="radio" name="Categorie" id="cat-salaires" value="Salaires"
+                                    @(Model.Categorie == "Salaires" ? "checked" : "") />
+                                <label for="cat-salaires" class="category-label">
+                                    <div class="category-icon"><i class="bi bi-people"></i></div>
+                                    <span class="category-name">Salaires</span>
+                                </label>
+                            </div>
+                            <div class="category-option cat-autre">
+                                <input type="radio" name="Categorie" id="cat-autre" value="Autre" @(Model.Categorie == "Autre" ? "checked" : "") />
+                                <label for="cat-autre" class="category-label">
+                                    <div class="category-icon"><i class="bi bi-three-dots"></i></div>
+                                    <span class="category-name">Autre</span>
+                                </label>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Categorie" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-card">
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <i class="bi bi-text-paragraph"></i> Description
+                        </h5>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description (optionnel)</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                placeholder="Decrivez la depense en detail..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-3 btn-actions">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-check-lg"></i> Enregistrer les modifications
+                    </button>
+                    <a href="@Url.Action("GestionDepenses")" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Info Card -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <div class="info-card-icon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <h5 class="info-card-title">Modification</h5>
+                </div>
+                <p class="info-card-content">
+                    Modifiez les informations de la depense. Les champs marques d'un <strong>*</strong> sont
+                    obligatoires.
+                </p>
+            </div>
+
+            <!-- Current Expense Summary -->
+            <div class="expense-summary">
+                <h6 class="expense-summary-title">
+                    <i class="bi bi-receipt"></i> Valeurs actuelles
+                </h6>
+                <div class="expense-detail">
+                    <span class="expense-detail-label">ID Depense</span>
+                    <span class="expense-detail-value">#@Model.Id_depense</span>
+                </div>
+                <div class="expense-detail">
+                    <span class="expense-detail-label">Montant</span>
+                    <span class="expense-detail-value amount">@Model.Montant.ToString("N2") DH</span>
+                </div>
+                <div class="expense-detail">
+                    <span class="expense-detail-label">Date</span>
+                    <span class="expense-detail-value">@Model.Date_depense.ToString("dd/MM/yyyy")</span>
+                </div>
+                <div class="expense-detail">
+                    <span class="expense-detail-label">Categorie</span>
+                    <span class="expense-detail-value">@Model.Categorie</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon success">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+                <h5 class="mb-2">Succes!</h5>
+                <p class="text-muted mb-0" id="successMessage">Operation effectuee avec succes.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon error">
+                    <i class="bi bi-x-lg"></i>
+                </div>
+                <h5 class="mb-2">Erreur!</h5>
+                <p class="text-muted mb-0" id="errorMessage">Une erreur s'est produite.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Modal -->
+<div class="modal fade" id="warningModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h5 class="mb-2">Attention!</h5>
+                <p class="text-muted mb-0" id="warningMessage">Veuillez verifier les informations.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning px-4" data-bs-dismiss="modal">Compris</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Set montant
+        function setMontant(value) {
+            document.getElementById('montantInput').value = value;
+        }
+
+        // Set today's date
+        function setToday() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateInput').value = today;
+        }
+
+        // Set yesterday's date
+        function setYesterday() {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            document.getElementById('dateInput').value = yesterday.toISOString().split('T')[0];
+        }
+
+        // Modal functions
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message || 'Operation effectuee avec succes.';
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message || 'Une erreur s\'est produite.';
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message) {
+            document.getElementById('warningMessage').textContent = message || 'Veuillez verifier les informations.';
+            new bootstrap.Modal(document.getElementById('warningModal')).show();
+        }
+
+        // Check TempData messages
+        @if (TempData["Success"] != null)
+            {
+                <text>showSuccessModal('@TempData["Success"]');</text>
+        }
+            @if (TempData["Error"] != null)
+            {
+                <text>showErrorModal('@TempData["Error"]');</text>
+        }
+            @if (TempData["Warning"] != null)
+            {
+                <text>showWarningModal('@TempData["Warning"]');</text>
+        }
+
+            // Detect unsaved changes
+            let formChanged = false;
+        const form = document.getElementById('editExpenseForm');
+
+        form.querySelectorAll('input, textarea, select').forEach(element => {
+            element.addEventListener('change', () => formChanged = true);
+            element.addEventListener('input', () => formChanged = true);
+        });
+
+        window.addEventListener('beforeunload', function (e) {
+            if (formChanged) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        form.addEventListener('submit', () => formChanged = false);
+    </script>
+}

@@ -4,42 +4,336 @@
     Layout = "~/Views/Shared/_ComptableLayout.cshtml";
 }
 
+<style>
+    :root {
+        --primary-color: #5B8DEF;
+        --primary-light: #E8F0FE;
+        --success-color: #1cc88a;
+        --success-light: #d4edda;
+        --info-color: #36b9cc;
+        --info-light: #d1ecf1;
+        --warning-color: #f6c23e;
+        --warning-light: #fff3cd;
+        --danger-color: #e74a3b;
+        --danger-light: #f8d7da;
+        --gray-color: #858796;
+        --light-bg: #f8f9fc;
+        --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #4a7bd4 100%);
+        border-radius: 15px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        color: white;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .page-header .header-subtitle {
+        opacity: 0.9;
+        margin-top: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    .stat-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 2rem rgba(58, 59, 69, 0.15);
+    }
+
+    .stat-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .stat-card .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-card .stat-icon.primary {
+        background: var(--primary-light);
+        color: var(--primary-color);
+    }
+
+    .stat-card .stat-icon.success {
+        background: var(--success-light);
+        color: var(--success-color);
+    }
+
+    .stat-card .stat-icon.info {
+        background: var(--info-light);
+        color: var(--info-color);
+    }
+
+    .stat-card .stat-icon.warning {
+        background: var(--warning-light);
+        color: var(--warning-color);
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+
+    .stat-card .stat-label {
+        color: var(--gray-color);
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .data-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
+
+    .data-card .card-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #4a7bd4 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border: none;
+    }
+
+    .data-card .card-header h6 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .search-box {
+        position: relative;
+        max-width: 300px;
+    }
+
+    .search-box input {
+        padding-left: 2.5rem;
+        border-radius: 25px;
+        border: 2px solid #e3e6f0;
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(91, 141, 239, 0.15);
+    }
+
+    .search-box .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-color);
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background: var(--light-bg);
+        border: none;
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-color: #e3e6f0;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background: var(--primary-light);
+    }
+
+    .badge-id {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #4a7bd4 100%);
+        color: white;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .amount-display {
+        font-weight: 700;
+        color: var(--success-color);
+        font-size: 1rem;
+    }
+
+    .date-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .date-display i {
+        color: var(--primary-color);
+    }
+
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+
+    .empty-state .empty-icon {
+        width: 100px;
+        height: 100px;
+        background: var(--primary-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .empty-state .empty-icon i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+    }
+
+    .timeline-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.75rem;
+        background: var(--info-light);
+        color: var(--info-color);
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1rem 1.25rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.25rem;
+        }
+
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+
+        .hide-mobile {
+            display: none !important;
+        }
+    }
+</style>
+
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">
-            <i class="bi bi-wallet2 me-2"></i>Consulter les Budgets
-        </h1>
+    <!-- En-tete de page -->
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1><i class="bi bi-wallet2 me-2"></i>Consulter les Budgets</h1>
+                <div class="header-subtitle">
+                    <i class="bi bi-calendar3 me-1"></i>Historique des allocations budgetaires
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Statistiques des budgets -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card glass-card shadow-sm">
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="text-muted small mb-1">Budget Total Alloué</div>
-                            <div class="h4 mb-0 fw-bold text-primary">
-                                @Model.Sum(b => b.Montant_alloue).ToString("N2") MAD
+                            <div class="stat-label">Budget Total Alloue</div>
+                            <div class="stat-value text-primary">
+                                @Model.Sum(b => b.Montant_alloue).ToString("N2") <small>MAD</small>
                             </div>
                         </div>
-                        <i class="bi bi-wallet-fill fs-1 text-primary opacity-25"></i>
+                        <div class="stat-icon primary">
+                            <i class="bi bi-wallet-fill"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card glass-card shadow-sm">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="text-muted small mb-1">Nombre de Budgets</div>
-                            <div class="h4 mb-0 fw-bold text-success">
+                            <div class="stat-label">Nombre de Budgets</div>
+                            <div class="stat-value text-success">
                                 @Model.Count
                             </div>
                         </div>
-                        <i class="bi bi-bar-chart-fill fs-1 text-success opacity-25"></i>
+                        <div class="stat-icon success">
+                            <i class="bi bi-bar-chart-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label">Budget Moyen</div>
+                            <div class="stat-value text-info">
+                                @(Model.Any() ? Model.Average(b => b.Montant_alloue).ToString("N2") : "0.00") <small>MAD</small>
+                            </div>
+                        </div>
+                        <div class="stat-icon info">
+                            <i class="bi bi-calculator"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-label">Dernier Budget</div>
+                            <div class="stat-value text-warning">
+                                @(Model.Any() ? Model.OrderByDescending(b => b.Date_alloue).First().Montant_alloue.ToString("N2") : "0.00") <small>MAD</small>
+                            </div>
+                        </div>
+                        <div class="stat-icon warning">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -47,23 +341,27 @@
     </div>
 
     <!-- Tableau des budgets -->
-    <div class="card glass-card shadow-sm">
-        <div class="card-header bg-white py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                <i class="bi bi-table me-1"></i>Liste des Budgets
-            </h6>
+    <div class="card data-card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h6><i class="bi bi-table me-2"></i>Liste des Budgets</h6>
+                <div class="search-box">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Rechercher...">
+                </div>
+            </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             @if (Model != null && Model.Any())
             {
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-light">
+                    <table class="table table-hover" id="budgetsTable">
+                        <thead>
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
-                                <th><i class="bi bi-wallet me-1"></i>Montant Alloué</th>
-                                <th><i class="bi bi-calendar me-1"></i>Date d'Allocation</th>
-                                <th><i class="bi bi-clock me-1"></i>Date de Création</th>
+                                <th><i class="bi bi-wallet me-1"></i>Montant Alloue</th>
+                                <th><i class="bi bi-calendar-event me-1"></i>Date d'Allocation</th>
+                                <th class="hide-mobile"><i class="bi bi-clock me-1"></i>Date de Creation</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,18 +369,26 @@
                             {
                                 <tr>
                                     <td>
-                                        <span class="badge bg-primary">
-                                            <i class="bi bi-hash me-1"></i>@budget.Id_budget
+                                        <span class="badge-id">
+                                            #@budget.Id_budget
                                         </span>
                                     </td>
-                                    <td class="fw-bold text-success">
-                                        @budget.Montant_alloue.ToString("N2") MAD
+                                    <td>
+                                        <span class="amount-display">
+                                            <i class="bi bi-currency-exchange me-1"></i>@budget.Montant_alloue.ToString("N2") MAD
+                                        </span>
                                     </td>
                                     <td>
-                                        @budget.Date_alloue.ToString("dd/MM/yyyy")
+                                        <div class="date-display">
+                                            <i class="bi bi-calendar-check"></i>
+                                            @budget.Date_alloue.ToString("dd/MM/yyyy")
+                                        </div>
                                     </td>
-                                    <td class="text-muted">
-                                        @budget.DateCreation.ToString("dd/MM/yyyy HH:mm")
+                                    <td class="hide-mobile">
+                                        <span class="timeline-badge">
+                                            <i class="bi bi-clock-history"></i>
+                                            @budget.DateCreation.ToString("dd/MM/yyyy HH:mm")
+                                        </span>
                                     </td>
                                 </tr>
                             }
@@ -92,12 +398,133 @@
             }
             else
             {
-                <div class="text-center py-5">
-                    <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
-                    <h5 class="text-muted">Aucun budget enregistré</h5>
-                    <p class="text-muted small">Il n'y a actuellement aucun budget à consulter.</p>
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="bi bi-inbox"></i>
+                    </div>
+                    <h5 class="text-muted mb-2">Aucun budget enregistre</h5>
+                    <p class="text-muted small mb-0">Il n'y a actuellement aucun budget a consulter.</p>
                 </div>
             }
         </div>
     </div>
 </div>
+
+<!-- Modals de notification -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-body text-center p-4">
+                <div class="mb-3">
+                    <div style="width: 80px; height: 80px; background: var(--success-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <h5 class="text-success mb-2">Succes!</h5>
+                <p id="successMessage" class="text-muted mb-3"></p>
+                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-body text-center p-4">
+                <div class="mb-3">
+                    <div style="width: 80px; height: 80px; background: var(--danger-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        <i class="bi bi-x-circle-fill text-danger" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <h5 class="text-danger mb-2">Erreur!</h5>
+                <p id="errorMessage" class="text-muted mb-3"></p>
+                <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="warningModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-body text-center p-4">
+                <div class="mb-3">
+                    <div style="width: 80px; height: 80px; background: var(--warning-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <h5 class="text-warning mb-2">Attention!</h5>
+                <p id="warningMessage" class="text-muted mb-3"></p>
+                <button type="button" class="btn btn-warning px-4" data-bs-dismiss="modal">Compris</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="infoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-body text-center p-4">
+                <div class="mb-3">
+                    <div style="width: 80px; height: 80px; background: var(--info-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        <i class="bi bi-info-circle-fill text-info" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <h5 class="text-info mb-2">Information</h5>
+                <p id="infoMessage" class="text-muted mb-3"></p>
+                <button type="button" class="btn btn-info text-white px-4" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Recherche en temps reel
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#budgetsTable tbody tr');
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        // Fonctions pour afficher les modals
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message) {
+            document.getElementById('warningMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('warningModal')).show();
+        }
+
+        function showInfoModal(message) {
+            document.getElementById('infoMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('infoModal')).show();
+        }
+
+        // Affichage des messages TempData
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>showSuccessModal("@TempData["SuccessMessage"]");</text>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>showErrorModal("@TempData["ErrorMessage"]");</text>
+        }
+        @if (TempData["WarningMessage"] != null)
+        {
+            <text>showWarningModal("@TempData["WarningMessage"]");</text>
+        }
+    </script>
+}

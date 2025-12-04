@@ -4,72 +4,598 @@
     Layout = "~/Views/Shared/_ComptableLayout.cshtml";
 }
 
+<style>
+    /* Variables */
+    :root {
+        --primary-color: #5B8DEF;
+        --primary-dark: #4A7BE0;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --info-color: #17a2b8;
+        --light-bg: #f8f9fc;
+        --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border-radius: 15px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: var(--card-shadow);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+
+    .page-header .subtitle {
+        opacity: 0.9;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+    }
+
+    .btn-back {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        transform: translateX(-3px);
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        border: none;
+        overflow: hidden;
+    }
+
+    .form-card .card-header {
+        background: linear-gradient(135deg, #f8f9fc 0%, #eef2f7 100%);
+        border-bottom: 1px solid #e3e6f0;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .form-card .card-header h6 {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .form-card .card-body {
+        padding: 2rem;
+    }
+
+    /* Section Titles */
+    .section-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e3e6f0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        color: var(--primary-color);
+    }
+
+    /* Form Controls */
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .form-label .required {
+        color: var(--danger-color);
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e3e6f0;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(91, 141, 239, 0.15);
+    }
+
+    .input-group-text {
+        background: linear-gradient(135deg, #f8f9fc 0%, #eef2f7 100%);
+        border: 2px solid #e3e6f0;
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+        color: #6c757d;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 10px 10px 0;
+    }
+
+    /* Category Select Styling */
+    .category-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .category-option {
+        display: none;
+    }
+
+    .category-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border: 2px solid #e3e6f0;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+        font-size: 0.9rem;
+    }
+
+    .category-label:hover {
+        border-color: var(--primary-color);
+        background: rgba(91, 141, 239, 0.05);
+    }
+
+    .category-option:checked + .category-label {
+        border-color: var(--primary-color);
+        background: rgba(91, 141, 239, 0.1);
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .category-label i {
+        font-size: 1.1rem;
+    }
+
+    .category-fournitures i { color: #17a2b8; }
+    .category-equipement i { color: #6f42c1; }
+    .category-services i { color: #fd7e14; }
+    .category-formation i { color: #20c997; }
+    .category-deplacement i { color: #e83e8c; }
+    .category-autre i { color: #6c757d; }
+
+    /* Quick Amount Buttons */
+    .quick-amounts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .quick-amount-btn {
+        padding: 0.35rem 0.75rem;
+        border: 1px solid #e3e6f0;
+        border-radius: 6px;
+        background: white;
+        color: #6c757d;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .quick-amount-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background: rgba(91, 141, 239, 0.05);
+    }
+
+    /* Date Quick Button */
+    .date-today-btn {
+        padding: 0.35rem 0.75rem;
+        border: 1px solid #e3e6f0;
+        border-radius: 6px;
+        background: white;
+        color: #6c757d;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 0.5rem;
+    }
+
+    .date-today-btn:hover {
+        border-color: var(--success-color);
+        color: var(--success-color);
+        background: rgba(40, 167, 69, 0.05);
+    }
+
+    /* Textarea */
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    /* Action Buttons */
+    .btn-submit {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border: none;
+        color: white;
+        padding: 0.85rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(91, 141, 239, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(91, 141, 239, 0.4);
+        color: white;
+    }
+
+    .btn-cancel {
+        background: white;
+        border: 2px solid #e3e6f0;
+        color: #6c757d;
+        padding: 0.85rem 2rem;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        border-color: var(--danger-color);
+        color: var(--danger-color);
+        background: rgba(220, 53, 69, 0.05);
+    }
+
+    /* Info Card */
+    .info-card {
+        background: linear-gradient(135deg, rgba(91, 141, 239, 0.05) 0%, rgba(91, 141, 239, 0.1) 100%);
+        border: 1px solid rgba(91, 141, 239, 0.2);
+        border-radius: 12px;
+        padding: 1.25rem;
+    }
+
+    .info-card h6 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .info-card ul {
+        margin: 0;
+        padding-left: 1.25rem;
+    }
+
+    .info-card li {
+        color: #495057;
+        font-size: 0.85rem;
+        margin-bottom: 0.35rem;
+    }
+
+    /* Validation */
+    .text-danger {
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1.25rem;
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .page-header .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-card .card-body {
+            padding: 1.25rem;
+        }
+
+        .category-options {
+            gap: 0.5rem;
+        }
+
+        .category-label {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+        }
+    }
+</style>
+
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Ajouter une Dépense</h1>
-        <a href="@Url.Action("GestionDepenses")" class="btn btn-secondary">
-            <i class="bi bi-arrow-left-circle me-1"></i> Retour à la liste
-        </a>
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1><i class="bi bi-plus-circle me-2"></i>Ajouter une Depense</h1>
+                <div class="subtitle">Enregistrez une nouvelle depense dans le systeme</div>
+            </div>
+            <a href="@Url.Action("GestionDepenses")" class="btn btn-back">
+                <i class="bi bi-arrow-left me-2"></i>Retour a la liste
+            </a>
+        </div>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card shadow glass-card">
-                <div class="card-header bg-white py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-journal-plus me-1"></i> Nouvelle Dépense</h6>
+            <!-- Form Card -->
+            <div class="card form-card mb-4">
+                <div class="card-header">
+                    <h6><i class="bi bi-journal-plus me-2"></i>Nouvelle Depense</h6>
                 </div>
                 <div class="card-body">
-                    <form asp-action="AjouterDepense">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Date_depense" class="form-label">Date de la Dépense *</label>
-                                    <input asp-for="Date_depense" type="date" class="form-control" required />
-                                    <span asp-validation-for="Date_depense" class="text-danger"></span>
+                    <form asp-action="AjouterDepense" id="expenseForm">
+                        <!-- Section: Date et Montant -->
+                        <div class="section-title">
+                            <i class="bi bi-calendar-event"></i>
+                            Informations principales
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label asp-for="Date_depense" class="form-label">
+                                    Date de la Depense <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-calendar3"></i>
+                                    </span>
+                                    <input asp-for="Date_depense" type="date" class="form-control" id="dateDepense" required />
                                 </div>
+                                <button type="button" class="date-today-btn" onclick="setToday()">
+                                    <i class="bi bi-calendar-check me-1"></i>Aujourd'hui
+                                </button>
+                                <span asp-validation-for="Date_depense" class="text-danger d-block"></span>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Montant" class="form-label">Montant *</label>
-                                    <input asp-for="Montant" type="number" step="0.01" class="form-control"
+                                <label asp-for="Montant" class="form-label">
+                                    Montant <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </span>
+                                    <input asp-for="Montant" type="number" step="0.01" min="0" class="form-control" id="montantInput"
                                         placeholder="0.00" required />
-                                    <span asp-validation-for="Montant" class="text-danger"></span>
                                 </div>
+                                <div class="quick-amounts">
+                                    <button type="button" class="quick-amount-btn" onclick="setAmount(100)">100</button>
+                                    <button type="button" class="quick-amount-btn" onclick="setAmount(500)">500</button>
+                                    <button type="button" class="quick-amount-btn" onclick="setAmount(1000)">1 000</button>
+                                    <button type="button" class="quick-amount-btn" onclick="setAmount(5000)">5 000</button>
+                                    <button type="button" class="quick-amount-btn" onclick="setAmount(10000)">10 000</button>
+                                </div>
+                                <span asp-validation-for="Montant" class="text-danger d-block"></span>
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="Categorie" class="form-label">Catégorie *</label>
-                            <select asp-for="Categorie" class="form-control" required>
-                                <option value="">Sélectionnez une catégorie</option>
-                                <option value="Fournitures">Fournitures</option>
-                                <option value="Équipement">Équipement</option>
-                                <option value="Services">Services</option>
-                                <option value="Formation">Formation</option>
-                                <option value="Déplacement">Déplacement</option>
-                                <option value="Autre">Autre</option>
-                            </select>
-                            <span asp-validation-for="Categorie" class="text-danger"></span>
+                        <!-- Section: Categorie -->
+                        <div class="section-title">
+                            <i class="bi bi-tag"></i>
+                            Categorie
                         </div>
 
-                        <div class="form-group mb-4">
+                        <div class="mb-4">
+                            <label class="form-label">
+                                Selectionnez une categorie <span class="required">*</span>
+                            </label>
+                            <input type="hidden" asp-for="Categorie" id="categorieInput" />
+                            <div class="category-options">
+                                <input type="radio" name="categoryRadio" id="cat-fournitures" class="category-option" value="Fournitures" onchange="setCategory('Fournitures')">
+                                <label for="cat-fournitures" class="category-label category-fournitures">
+                                    <i class="bi bi-box-seam"></i> Fournitures
+                                </label>
+
+                                <input type="radio" name="categoryRadio" id="cat-equipement" class="category-option" value="Équipement" onchange="setCategory('Équipement')">
+                                <label for="cat-equipement" class="category-label category-equipement">
+                                    <i class="bi bi-pc-display"></i> Equipement
+                                </label>
+
+                                <input type="radio" name="categoryRadio" id="cat-services" class="category-option" value="Services" onchange="setCategory('Services')">
+                                <label for="cat-services" class="category-label category-services">
+                                    <i class="bi bi-gear"></i> Services
+                                </label>
+
+                                <input type="radio" name="categoryRadio" id="cat-formation" class="category-option" value="Formation" onchange="setCategory('Formation')">
+                                <label for="cat-formation" class="category-label category-formation">
+                                    <i class="bi bi-mortarboard"></i> Formation
+                                </label>
+
+                                <input type="radio" name="categoryRadio" id="cat-deplacement" class="category-option" value="Déplacement" onchange="setCategory('Déplacement')">
+                                <label for="cat-deplacement" class="category-label category-deplacement">
+                                    <i class="bi bi-car-front"></i> Deplacement
+                                </label>
+
+                                <input type="radio" name="categoryRadio" id="cat-autre" class="category-option" value="Autre" onchange="setCategory('Autre')">
+                                <label for="cat-autre" class="category-label category-autre">
+                                    <i class="bi bi-three-dots"></i> Autre
+                                </label>
+                            </div>
+                            <span asp-validation-for="Categorie" class="text-danger d-block"></span>
+                        </div>
+
+                        <!-- Section: Description -->
+                        <div class="section-title">
+                            <i class="bi bi-text-paragraph"></i>
+                            Details
+                        </div>
+
+                        <div class="mb-4">
                             <label asp-for="Description" class="form-label">Description</label>
-                            <textarea asp-for="Description" class="form-control" rows="3"
-                                placeholder="Description de la dépense..."></textarea>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                placeholder="Decrivez la depense en detail (optionnel)..."></textarea>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-glass btn-lg">
-                                <i class="bi bi-save me-1"></i> Enregistrer la Dépense
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 action-buttons pt-3">
+                            <button type="submit" class="btn btn-submit">
+                                <i class="bi bi-check-circle me-2"></i>Enregistrer la Depense
                             </button>
-                            <a href="@Url.Action("GestionDepenses")" class="btn btn-ghost btn-lg">
-                                <i class="bi bi-x-circle me-1"></i> Annuler
+                            <a href="@Url.Action("GestionDepenses")" class="btn btn-cancel">
+                                <i class="bi bi-x-circle me-2"></i>Annuler
                             </a>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <!-- Info Card -->
+            <div class="info-card">
+                <h6><i class="bi bi-info-circle me-2"></i>Conseils</h6>
+                <ul>
+                    <li>Tous les champs marques d'un asterisque (*) sont obligatoires</li>
+                    <li>Selectionnez la categorie appropriee pour un meilleur suivi</li>
+                    <li>Ajoutez une description detaillee pour faciliter les audits</li>
+                    <li>Verifiez le montant avant de soumettre le formulaire</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+            <div class="modal-body text-center p-4">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="bi bi-check-lg" style="font-size: 2.5rem; color: #28a745;"></i>
+                </div>
+                <h5 style="color: #155724; font-weight: 600; margin-bottom: 0.75rem;">Succes!</h5>
+                <p id="successMessage" style="color: #495057; margin-bottom: 1.5rem;"></p>
+                <button type="button" class="btn" style="background: #28a745; color: white; border-radius: 8px; padding: 0.5rem 2rem;" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+            <div class="modal-body text-center p-4">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="bi bi-x-lg" style="font-size: 2.5rem; color: #dc3545;"></i>
+                </div>
+                <h5 style="color: #721c24; font-weight: 600; margin-bottom: 0.75rem;">Erreur!</h5>
+                <p id="errorMessage" style="color: #495057; margin-bottom: 1.5rem;"></p>
+                <button type="button" class="btn" style="background: #dc3545; color: white; border-radius: 8px; padding: 0.5rem 2rem;" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Modal -->
+<div class="modal fade" id="warningModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+            <div class="modal-body text-center p-4">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="bi bi-exclamation-triangle" style="font-size: 2.5rem; color: #856404;"></i>
+                </div>
+                <h5 style="color: #856404; font-weight: 600; margin-bottom: 0.75rem;">Attention!</h5>
+                <p id="warningMessage" style="color: #495057; margin-bottom: 1.5rem;"></p>
+                <button type="button" class="btn" style="background: #ffc107; color: #212529; border-radius: 8px; padding: 0.5rem 2rem;" data-bs-dismiss="modal">Compris</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Set today's date
+        function setToday() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateDepense').value = today;
+        }
+
+        // Set quick amount
+        function setAmount(amount) {
+            document.getElementById('montantInput').value = amount;
+        }
+
+        // Set category
+        function setCategory(category) {
+            document.getElementById('categorieInput').value = category;
+        }
+
+        // Modal functions
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+
+        function showWarningModal(message) {
+            document.getElementById('warningMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('warningModal')).show();
+        }
+
+        // Form validation
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            const category = document.getElementById('categorieInput').value;
+            if (!category) {
+                e.preventDefault();
+                showWarningModal('Veuillez sélectionner une catégorie.');
+                return false;
+            }
+        });
+
+        // Check for TempData messages
+        @if (TempData["Success"] != null)
+        {
+            <text>showSuccessModal("@TempData["Success"]");</text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>showErrorModal("@TempData["Error"]");</text>
+        }
+        @if (TempData["Warning"] != null)
+        {
+            <text>showWarningModal("@TempData["Warning"]");</text>
+        }
+    </script>
+}

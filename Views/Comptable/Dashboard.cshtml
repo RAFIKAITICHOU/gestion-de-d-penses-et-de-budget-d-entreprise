@@ -3,48 +3,861 @@
     Layout = "~/Views/Shared/_ComptableLayout.cshtml";
 }
 
-<div class="container mt-4">
-    <h2>Tableau de Bord - Comptable</h2>
-    
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary">
+<style>
+    /* Variables de couleurs */
+    :root {
+        --primary-color: #5B8DEF;
+        --primary-light: #E8F0FE;
+        --success-color: #1cc88a;
+        --success-light: #d4edda;
+        --info-color: #36b9cc;
+        --info-light: #d1ecf1;
+        --warning-color: #f6c23e;
+        --warning-light: #fff3cd;
+        --danger-color: #e74a3b;
+        --danger-light: #f8d7da;
+        --gray-color: #858796;
+        --light-bg: #f8f9fc;
+        --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    /* En-tete de page */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #4a7bd4 100%);
+        border-radius: 15px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        color: white;
+        box-shadow: var(--card-shadow);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .page-header .date-display {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+    }
+
+    /* Cartes de statistiques */
+    .stat-card {
+        border: none;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        background: white;
+        box-shadow: var(--card-shadow);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 2rem rgba(58, 59, 69, 0.15);
+    }
+
+    .stat-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .stat-card .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-card .stat-icon.primary {
+        background: var(--primary-light);
+        color: var(--primary-color);
+    }
+
+    .stat-card .stat-icon.success {
+        background: var(--success-light);
+        color: var(--success-color);
+    }
+
+    .stat-card .stat-icon.info {
+        background: var(--info-light);
+        color: var(--info-color);
+    }
+
+    .stat-card .stat-icon.warning {
+        background: var(--warning-light);
+        color: var(--warning-color);
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-card .stat-label {
+        color: var(--gray-color);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-card .stat-change {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+    }
+
+    .stat-card .stat-change.positive {
+        background: var(--success-light);
+        color: var(--success-color);
+    }
+
+    .stat-card .stat-change.negative {
+        background: var(--danger-light);
+        color: var(--danger-color);
+    }
+
+    /* Cartes de graphiques */
+    .chart-card {
+        border: none;
+        border-radius: 15px;
+        background: white;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
+
+    .chart-card .card-header {
+        background: white;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 1rem 1.5rem;
+    }
+
+    .chart-card .card-header h6 {
+        margin: 0;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .chart-card .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Legende du graphique camembert */
+    .category-legend {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f1f1;
+        transition: background 0.2s ease;
+    }
+
+    .category-legend:last-child {
+        border-bottom: none;
+    }
+
+    .category-legend:hover {
+        background: var(--light-bg);
+        padding-left: 0.5rem;
+        border-radius: 8px;
+    }
+
+    .category-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .category-legend .category-name {
+        margin-left: 0.75rem;
+        color: #555;
+        font-size: 0.9rem;
+    }
+
+    .category-legend .category-amount {
+        margin-left: auto;
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* Carte actions rapides */
+    .action-card {
+        border: none;
+        border-radius: 15px;
+        background: white;
+        box-shadow: var(--card-shadow);
+    }
+
+    .action-card .card-header {
+        background: white;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 1rem 1.5rem;
+    }
+
+    .action-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .action-btn {
+        border-radius: 10px;
+        padding: 0.875rem 1.25rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .action-btn:hover {
+        transform: translateX(5px);
+    }
+
+    .action-btn.btn-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #4a7bd4 100%);
+        border: none;
+    }
+
+    .action-btn.btn-primary:hover {
+        background: linear-gradient(135deg, #4a7bd4 0%, var(--primary-color) 100%);
+    }
+
+    /* Liste des dernieres depenses */
+    .expense-item {
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f1f1;
+        transition: all 0.2s ease;
+    }
+
+    .expense-item:last-child {
+        border-bottom: none;
+    }
+
+    .expense-item:hover {
+        background: var(--light-bg);
+        padding-left: 0.5rem;
+        border-radius: 8px;
+        margin-left: -0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .expense-category {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+
+    .expense-date {
+        font-size: 0.8rem;
+        color: var(--gray-color);
+    }
+
+    .expense-amount {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #4a7bd4 100%);
+        color: white;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .expense-description {
+        color: var(--gray-color);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Etat vide */
+    .empty-state {
+        padding: 3rem 1rem;
+        text-align: center;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: var(--gray-color);
+        margin: 0;
+    }
+
+    /* Barre de progression budget */
+    .budget-progress {
+        background: #e9ecef;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+
+    .budget-progress .progress-bar {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.6s ease;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 1rem 1.25rem;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.35rem;
+        }
+
+        .stat-card .stat-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.25rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .page-header .date-display {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.75rem;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- En-tete de page -->
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap">
+        <h1>
+            <i class="bi bi-speedometer2 me-2"></i>Tableau de Bord
+        </h1>
+        <div class="date-display">
+            <i class="bi bi-calendar-check me-1"></i>
+            @DateTime.Now.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))
+        </div>
+    </div>
+
+    <!-- Cartes de statistiques -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Dépenses Enregistrées</h5>
-                    <p class="card-text display-4">@ViewBag.Stats.TotalDepenses</p>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="stat-label mb-2">Total Depenses</p>
+                            <h3 class="stat-value text-primary">
+                                @ViewBag.Stats.MontantTotalDepenses.ToString("N2") MAD
+                            </h3>
+                            <span class="stat-change positive">
+                                <i class="bi bi-receipt me-1"></i>@ViewBag.Stats.TotalDepenses depenses
+                            </span>
+                        </div>
+                        <div class="stat-icon primary">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success">
+
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Total Dépenses</h5>
-                    <p class="card-text display-4">@ViewBag.Stats.MontantTotalDepenses.ToString("C")</p>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="stat-label mb-2">Budget Actuel</p>
+                            <h3 class="stat-value text-success">
+                                @ViewBag.Stats.BudgetActuel.ToString("N2") MAD
+                            </h3>
+                            @{
+                                var budgetUtilise = ViewBag.Stats.BudgetActuel > 0 ?
+                                (ViewBag.Stats.MontantTotalDepenses / ViewBag.Stats.BudgetActuel * 100) : 0;
+                                var progressColor = budgetUtilise < 50 ? "bg-success" : budgetUtilise < 80 ? "bg-warning" :
+                                "bg-danger";
+                            }
+                            <div class="budget-progress">
+                                <div class="progress-bar @progressColor" style="width: @budgetUtilise%"></div>
+                            </div>
+                            <span class="small text-muted mt-1 d-block">
+                                <i class="bi bi-percent me-1"></i>@budgetUtilise.ToString("F1")% utilise
+                            </span>
+                        </div>
+                        <div class="stat-icon success">
+                            <i class="bi bi-wallet-fill"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-info">
+
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Budget Actuel</h5>
-                    <p class="card-text display-4">@ViewBag.Stats.BudgetActuel.ToString("C")</p>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="stat-label mb-2">Depenses du Mois</p>
+                            <h3 class="stat-value text-info">
+                                @{
+                                    var depensesMois = ViewBag.DepensesMois ?? 0m;
+                                }
+                                @depensesMois.ToString("N2") MAD
+                            </h3>
+                            <span class="stat-change positive">
+                                <i class="bi bi-calendar-month me-1"></i>@DateTime.Now.ToString("MMMM", new
+                                                                System.Globalization.CultureInfo("fr-FR"))
+                            </span>
+                        </div>
+                        <div class="stat-icon info">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="stat-label mb-2">Solde Restant</p>
+                            @{
+                                var soldeRestant = ViewBag.Stats.BudgetActuel - ViewBag.Stats.MontantTotalDepenses;
+                                var soldeClass = soldeRestant >= 0 ? "text-warning" : "text-danger";
+                            }
+                            <h3 class="stat-value @soldeClass">
+                                @soldeRestant.ToString("N2") MAD
+                            </h3>
+                            <span class="stat-change @(soldeRestant >= 0 ? "positive" : "negative")">
+                                <i class="bi bi-piggy-bank me-1"></i>Disponible
+                            </span>
+                        </div>
+                        <div class="stat-icon warning">
+                            <i class="bi bi-safe"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Actions Rapides</h5>
+    <!-- Graphiques -->
+    <div class="row mb-4">
+        <!-- Graphique des depenses par categorie (Camembert) -->
+        <div class="col-lg-6 mb-4">
+            <div class="card chart-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>
+                        <i class="bi bi-pie-chart-fill text-primary me-2"></i>Depenses par Categorie
+                    </h6>
                 </div>
                 <div class="card-body">
-                    <a href="@Url.Action("GestionDepenses")" class="btn btn-outline-primary btn-block mb-2">Gérer les Dépenses</a>
-                    <a href="@Url.Action("ConsulterBudgets")" class="btn btn-outline-success btn-block mb-2">Consulter les Budgets</a>
-                    <a href="@Url.Action("Rapports")" class="btn btn-outline-info btn-block mb-2">Consulter les Rapports</a>
+                    @if (ViewBag.DepensesParCategorie != null &&
+                                        ((IEnumerable<dynamic>)ViewBag.DepensesParCategorie).Any())
+                    {
+                        <div class="chart-container" style="position: relative; height: 280px;">
+                            <canvas id="categorieChart"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            @foreach (var item in ViewBag.DepensesParCategorie)
+                            {
+                                <div class="category-legend" data-category="@item.categorie"
+                                    data-color="@GetCategoryColor(item.categorie)">
+                                    <div class="category-dot" style="background-color: @GetCategoryColor(item.categorie);">
+                                    </div>
+                                    <span class="category-name">@item.categorie</span>
+                                    <span class="category-amount">@item.total.ToString("N2") MAD</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-pie-chart"></i>
+                            <p>Aucune donnee de depenses disponible</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique des depenses mensuelles (Barres) -->
+        <div class="col-lg-6 mb-4">
+            <div class="card chart-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>
+                        <i class="bi bi-bar-chart-fill text-success me-2"></i>Evolution Mensuelle
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.DepensesMensuelles != null && ((IEnumerable<dynamic>)ViewBag.DepensesMensuelles).Any())
+                    {
+                        <div class="chart-container" style="position: relative; height: 320px;">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-bar-chart"></i>
+                            <p>Aucune donnee mensuelle disponible</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique de tendance des depenses (Ligne) -->
+        <div class="col-12 mb-4">
+            <div class="card chart-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6>
+                        <i class="bi bi-graph-up-arrow text-info me-2"></i>Tendance des Depenses (6 derniers mois)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.DepensesMensuelles != null && ((IEnumerable<dynamic>)ViewBag.DepensesMensuelles).Any())
+                    {
+                        <div class="chart-container" style="position: relative; height: 250px;">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-graph-up"></i>
+                            <p>Aucune tendance disponible</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides et dernieres depenses -->
+    <div class="row">
+        <!-- Actions rapides -->
+        <div class="col-lg-5 mb-4">
+            <div class="card action-card h-100">
+                <div class="card-header">
+                    <h6 class="m-0 fw-bold">
+                        <i class="bi bi-lightning-charge-fill text-warning me-2"></i>Actions Rapides
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="@Url.Action("AjouterDepense")" class="btn btn-primary action-btn">
+                            <i class="bi bi-plus-circle me-2"></i>Ajouter une Depense
+                        </a>
+                        <a href="@Url.Action("GestionDepenses")" class="btn btn-outline-primary action-btn">
+                            <i class="bi bi-journal-text me-2"></i>Gerer les Depenses
+                        </a>
+                        <a href="@Url.Action("ConsulterBudgets")" class="btn btn-outline-success action-btn">
+                            <i class="bi bi-wallet me-2"></i>Consulter les Budgets
+                        </a>
+                        <a href="@Url.Action("Rapports")" class="btn btn-outline-info action-btn">
+                            <i class="bi bi-graph-up me-2"></i>Consulter les Rapports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dernieres depenses -->
+        <div class="col-lg-7 mb-4">
+            <div class="card action-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 fw-bold">
+                        <i class="bi bi-clock-history text-primary me-2"></i>Dernieres Depenses
+                    </h6>
+                    <a href="@Url.Action("GestionDepenses")" class="btn btn-sm btn-outline-primary">
+                        Voir tout <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.DernieresDepenses != null && ((IEnumerable<dynamic>)ViewBag.DernieresDepenses).Any())
+                    {
+                        @foreach (var depense in ViewBag.DernieresDepenses)
+                        {
+                            <div class="expense-item d-flex justify-content-between align-items-center">
+                                <div class="flex-grow-1">
+                                    <div class="expense-category">@depense.Categorie</div>
+                                    <div class="expense-date">
+                                        <i class="bi bi-calendar3 me-1"></i>@depense.Date_depense.ToString("dd/MM/yyyy")
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(depense.Description))
+                                    {
+                                        <div class="expense-description">
+                                            <i class="bi bi-chat-left-text me-1"></i>@depense.Description
+                                        </div>
+                                    }
+                                </div>
+                                <span class="expense-amount">@depense.Montant.ToString("N2") MAD</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>Aucune depense recente</p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Configuration globale Chart.js
+        Chart.defaults.font.family = "'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
+        Chart.defaults.color = '#858796';
+
+        // Fonction pour les couleurs des categories
+        function getCategoryColor(category) {
+            const colors = {
+                'Fournitures': '#5B8DEF',
+                'Équipement': '#1cc88a',
+                'Services': '#36b9cc',
+                'Formation': '#f6c23e',
+                'Déplacement': '#e74a3b',
+                'Autre': '#858796'
+            };
+            return colors[category] || '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+        }
+
+        // Graphique des depenses par categorie (Camembert)
+        @if (ViewBag.DepensesParCategorie != null)
+            {
+                var categories = ViewBag.DepensesParCategorie as IEnumerable<dynamic>;
+                <text>
+                    var categorieCtx = document.getElementById('categorieChart');
+                    if (categorieCtx) {
+                        // Récupérer les couleurs depuis les data-attributes
+                        var categoryElements = document.querySelectorAll('.category-legend');
+                    var colors = [];
+
+                    categoryElements.forEach(function(el) {
+                            var color = el.getAttribute('data-color');
+                    if (color) colors.push(color);
+                        });
+
+                    new Chart(categorieCtx.getContext('2d'), {
+                        type: 'doughnut',
+                    data: {
+                        labels: [
+                                    @foreach (var item in categories)
+                    {
+                        @Html.Raw($"'{item.categorie}',")
+                    }
+                    ],
+                    datasets: [{
+                        data: [
+                                        @foreach (var item in categories)
+                    {
+                        @Html.Raw($"{item.total},")
+                    }
+                    ],
+                    backgroundColor: colors,
+                    borderWidth: 0,
+                    hoverOffset: 10
+                                }]
+                            },
+                    options: {
+                        responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function (context) {
+                                                var value = context.raw || 0;
+                                                var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    var percentage = Math.round((value / total) * 100);
+                    return context.label + ': ' + value.toLocaleString('fr-FR') + ' MAD (' + percentage + '%)';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                </text>
+        }
+
+            // Graphique des depenses mensuelles (Barres)
+            @if (ViewBag.DepensesMensuelles != null)
+            {
+                var months = ViewBag.DepensesMensuelles as IEnumerable<dynamic>;
+                <text>
+                    var monthlyCtx = document.getElementById('monthlyChart');
+                    if (monthlyCtx) {
+                        new Chart(monthlyCtx.getContext('2d'), {
+                            type: 'bar',
+                            data: {
+                                labels: [
+                                    @foreach (var item in months)
+                                    {
+                                        @Html.Raw($"'{item.mois}',")
+                                    }
+                                ],
+                                datasets: [{
+                                    label: 'Montant (MAD)',
+                                    data: [
+                                        @foreach (var item in months)
+                                        {
+                                            @Html.Raw($"{item.total},")
+                                        }
+                                    ],
+                                    backgroundColor: 'rgba(91, 141, 239, 0.7)',
+                                    borderColor: 'rgba(91, 141, 239, 1)',
+                                    borderWidth: 2,
+                                    borderRadius: 8,
+                                    borderSkipped: false
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(0,0,0,0.05)' },
+                                        ticks: {
+                                            callback: function (value) {
+                                                return value.toLocaleString('fr-FR') + ' MAD';
+                                            }
+                                        }
+                                    },
+                                    x: {
+                                        grid: { display: false }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(0,0,0,0.8)',
+                                        padding: 12,
+                                        cornerRadius: 8,
+                                        callbacks: {
+                                            label: function (context) {
+                                                return context.raw.toLocaleString('fr-FR') + ' MAD';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                </text>
+        }
+
+            // Graphique de tendance (Ligne)
+            @if (ViewBag.DepensesMensuelles != null)
+            {
+                var trendMonths = ViewBag.DepensesMensuelles as IEnumerable<dynamic>;
+                <text>
+                    var trendCtx = document.getElementById('trendChart');
+                    if (trendCtx) {
+                        new Chart(trendCtx.getContext('2d'), {
+                            type: 'line',
+                            data: {
+                                labels: [
+                                    @foreach (var item in trendMonths)
+                                    {
+                                        @Html.Raw($"'{item.mois}',")
+                                    }
+                                ],
+                                datasets: [{
+                                    label: 'Évolution des Dépenses',
+                                    data: [
+                                        @foreach (var item in trendMonths)
+                                        {
+                                            @Html.Raw($"{item.total},")
+                                        }
+                                    ],
+                                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                                    borderColor: 'rgba(28, 200, 138, 1)',
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointBackgroundColor: 'rgba(28, 200, 138, 1)',
+                                    pointBorderColor: '#fff',
+                                    pointBorderWidth: 2,
+                                    pointRadius: 5,
+                                    pointHoverRadius: 7
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(0,0,0,0.05)' },
+                                        ticks: {
+                                            callback: function (value) {
+                                                return value.toLocaleString('fr-FR') + ' MAD';
+                                            }
+                                        }
+                                    },
+                                    x: {
+                                        grid: { display: false }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(0,0,0,0.8)',
+                                        padding: 12,
+                                        cornerRadius: 8,
+                                        callbacks: {
+                                            label: function (context) {
+                                                return context.raw.toLocaleString('fr-FR') + ' MAD';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                </text>
+        }
+    </script>
+}
+@functions {
+    public string GetCategoryColor(string category)
+    {
+        return category switch
+        {
+            "Fournitures" => "#5B8DEF",
+            "Équipement" => "#1cc88a",
+            "Services" => "#36b9cc",
+            "Formation" => "#f6c23e",
+            "Déplacement" => "#e74a3b",
+            _ => "#858796"
+        };
+    }
+}
