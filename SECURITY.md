@@ -53,4 +53,4 @@ Nous encourageons la divulgation responsable. Merci de ne pas exploiter de faill
 
 ## 📅 Dernière mise à jour
 
-Novembre 2025
+Décembre 2025
