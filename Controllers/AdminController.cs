@@ -146,7 +146,7 @@ namespace GestionBudget_V2.Controllers
         {
             try
             {
-                var comptables = _context.Comptables.ToList();
+                var comptables = _context.Comptables.ToList(); //Recupre les comptables depuis la base de donnes
                 return View(comptables);
             }
             catch (Exception ex)
